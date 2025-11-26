@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:formula1_fantasy/f1/data/models/teams_model.dart';
-import 'package:formula1_fantasy/routes/routes.dart';  // Make sure to import your TeamsModel class
+import 'package:formula1_fantasy/f1/presentation/providers/f1_provider.dart';
+import 'package:formula1_fantasy/routes/routes.dart';
+import 'package:provider/provider.dart';  // Make sure to import your TeamsModel class
 
 class ProfileFavoriteTeamWidget extends StatelessWidget {
   final TeamsModel team;
@@ -9,6 +11,8 @@ class ProfileFavoriteTeamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var teamsProvider = Provider.of<F1Provider>(context);
+
     const darkBg = Color(0xFF0F0F10);
 
     return InkWell(
@@ -23,6 +27,7 @@ class ProfileFavoriteTeamWidget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between name and points
             children: [
               // Team Name
@@ -31,10 +36,25 @@ class ProfileFavoriteTeamWidget extends StatelessWidget {
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
               // Team Points
-              Text(
-                "${team.points} points", // Display points
-                style: TextStyle(color: Colors.yellow, fontSize: 16),
-              ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+            Text(
+              "${team.points} points", // Display points
+              style: TextStyle(color: Colors.yellow, fontSize: 14),
+            ),
+            SizedBox(width: 10,),
+            IconButton(
+              onPressed: () {
+              if (teamsProvider.favs.contains(team)) {
+                teamsProvider.removeFromFavorites(team);
+              } else {
+                teamsProvider.addToFavorites(team);
+              }
+            },
+                icon: Icon(Icons.minimize,fontWeight: FontWeight.w900,))
+
+          ],)
             ],
           ),
         ),

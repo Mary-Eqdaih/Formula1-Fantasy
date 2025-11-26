@@ -17,97 +17,13 @@ Every race weekend combines **speed, strategy, and innovation** — and this app
 - 🧠 **Driver details** (name, nationality, code, birthdate, etc.)
 - 🗒️ **Race Notes** — add, edit, delete, or browse personal race notes saved locally via SQLite
 - ❤️ **Favorites** — mark and persist your favorite teams using SharedPreferences
-- 🔐 **Local Sign In / Sign Up** (email stored locally)
 - 🕹️ **Offline-first UX** — cached notes and favorites work even without internet
 - 🧭 **About F1** — beautiful educational section summarizing F1 eras, cars, and records
 - 💡 **Modern UI** — dark theme with authentic F1-style design and typography
+- 🔐 **Firebase Authentication** — added for secure sign-in and sign-up
+- 👤 **Profile**: View and edit user profile information, including favorite teams using Cloud Firestore
+- 🏆 **Leaderboard**: Display season standings, sorted by points
 
----
-
-## 🧱 Architecture (Clean & Practical)
-
-```
-lib/
-  data/
-    models/
-      about_f1_model.dart
-      driver_model.dart
-      notes_model.dart
-      race_info_model.dart
-      teams_model.dart
-    remote/
-      f1_api.dart
-      teams_api.dart
-      drivers_api.dart
-    local/
-      local_storage.dart      # SharedPreferences (email + favorites)
-      notes_db.dart           # SQLite (race notes)
-  presentation/
-    providers/
-      f1_provider.dart
-      notes_provider.dart
-    screens/
-      auth/ (sign_in.dart, sign_up.dart)
-      home/ (home.dart, home_screen.dart)
-      teams/ (teams.dart, team_details.dart)
-      notes/ (notes.dart, add_note.dart)
-      favorites/ (favorites.dart)
-      about_f1/ (about_f1.dart)
-    widgets/
-      custom_text_field.dart
-      teams_widget.dart
-      driver_widget.dart
-      race_widget.dart
-      notes_widget.dart
-      pills_widget.dart
-  routes/
-    routes.dart
-```
-
----
-
-### 🔄 State Flow
-
-```
-Ergast API (via Jolpi)
-      ↓
-TeamsApi / DriversApi / F1Api
-      ↓
-Models (fromJson)
-      ↓
-Providers (ChangeNotifier)
-      ↓
-UI Widgets (Consumer / Provider.of)
-```
-
----
-
-## 🔌 Data Sources (Free APIs)
-
-- **Ergast (via Jolpi Proxy)** – official F1 historical data  
-  🧩 `https://api.jolpi.ca/ergast/f1/current/constructors.json`  
-  🧩 `https://api.jolpi.ca/ergast/f1/current/last/results.json`  
-  🧩 `https://api.jolpi.ca/ergast/f1/current/next.json`
-
-- **Drivers per Constructor:**  
-  `https://api.jolpi.ca/ergast/f1/current/constructors/{constructorId}/drivers.json`
-
-✅ No authentication or API key required.
-
----
-
-## 🛠️ Tech Stack
-
-| Category | Library |
-|-----------|----------|
-| Framework | **Flutter (Dart)** |
-| State Management | **Provider** |
-| Network | **http** |
-| Local Storage | **SharedPreferences** |
-| Local Database | **sqflite** |
-| Assets | **flutter_svg**, PNG, SVG Logos |
-| Routing | **Named routes (Routes.dart)** |
-| Theme | **Custom dark theme (F1 Red accents)** |
 
 ---
 
@@ -116,7 +32,6 @@ UI Widgets (Consumer / Provider.of)
 ```bash
 # 1️⃣ Clone this repo
 git clone https://github.com/Mary-Eqdaih/Formula-1-Flutter.git
-cd formula1_fantasy_flutter
 
 # 2️⃣ Install dependencies
 flutter pub get
@@ -139,46 +54,28 @@ Make sure to have an emulator or connected device ready.
 - Manages CRUD operations for race notes
 - Automatically initializes database on app launch
 
----
-
-## 💾 Offline-First UX
-
-Even without internet:
-- Your **favorites** remain visible (SharedPreferences cache)
-- **Race notes** are always accessible (SQLite local DB)
-- The app gracefully loads previously fetched team data when possible
-
-This makes it lightweight and usable anywhere — even while traveling or offline.
 
 ---
+## UI Screenshots
 
-## 📱 UI Highlights
+Dark theme, mobile-first UI — built for F1 fans.
+Tap any image to view full size.
 
-| Screen | Description |
-|--------|--------------|
-| 🏁 **Teams** | Browse current constructors and view team details |
-| 👨‍✈️ **Drivers** | View driver information per constructor |
-| 🗒️ **Notes** | Record your own race observations and insights |
-| ❤️ **Favorites** | Quickly access your preferred teams |
-| 🧠 **About F1** | Learn about F1 history, rules, and iconic moments |
+| **Sign In** | **Sign Up** | **Home** | **Home 2** | **Race Details** |
+|-------------|-------------|----------|------------|------------------|
+| ![Sign In](assets/screenshots/sign_in.png) | ![Sign Up](assets/screenshots/sign_up.png) | ![Home](assets/screenshots/home.png) | ![Home 2](assets/screenshots/home(2).png) | ![Race Details](assets/screenshots/race_details.png) |
 
----
-## 📸 UI Screenshots
+| **Teams** | **Team Details** | **Leaderboard** |
+|-----------|------------------|-----------------|
+| ![Teams](assets/screenshots/teams.png) | ![Team Details](assets/screenshots/team_details.png) | ![Leaderboard](assets/screenshots/leaderboard.png) | 
 
-> Dark theme, mobile-first UI — built for F1 fans.  
-> Tap any image to view full size.
-
-
-| Sign In | Sign Up | Home | Home 2 |
-|---|---|---|---|
-| ![Sign In](assets/screenshots/sign_in.png) | ![Sign Up](assets/screenshots/sign_up.png)  | ![Home](assets/screenshots/home.png) | ![Home](assets/screenshots/home(2).png) |
-Teams | Team Details | Favorites | About F1 |
-|---|---|---|---|
-![Teams](assets/screenshots/teams.png) | ![Team Details](assets/screenshots/team_details.png) | ![Favorites](assets/screenshots/favorites.png) | ![About F1](assets/screenshots/about_f1.png) |
-
-| Add Note |Notes List  | Edit Note | Notes After Edit |
-|---|---|---|---|
+| **Add Note** | **Notes List** | **Edit Note** | **Notes After Edit** |
+|--------------|----------------|---------------|----------------------|
 | ![Add Note](assets/screenshots/add_note.png) | ![Notes](assets/screenshots/notes.png) | ![Edit Note](assets/screenshots/edit_note.png) | ![After Edit](assets/screenshots/notes_after_edit.png) |
+
+| **Settings** | **Profile** | **About F1** |
+|--------------|-------------|-------------|
+| ![Settings](assets/screenshots/settings.png) | ![Profile](assets/screenshots/profile.png) |![About F1](assets/screenshots/about_f1.png) |
 
 
 ---
