@@ -22,30 +22,9 @@ class DriverWidget extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          // Container(
-          //   width: 100,
-          //   height: 100,
-          //   padding: const EdgeInsets.all(10),
-          //   decoration: BoxDecoration(
-          //     color: Colors.white,
-          //     borderRadius: BorderRadius.circular(50),
-          //   ),
-          //   child: Image.asset(model.image, fit: BoxFit.contain),
-          // ),
-
-
           CircleAvatar(
             radius: 45,
             backgroundImage: AssetImage(model.image),
-            // Text(
-            //   _initials(model.name),
-            //   style: const TextStyle(
-            //     color: dark,
-            //     fontWeight: FontWeight.w800,
-            //     fontSize: 18,
-            //     fontFamily: 'TitilliumWeb',
-            //   ),
-            // ),
           ),
           const SizedBox(width: 25),
 
@@ -71,45 +50,68 @@ class DriverWidget extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
 
-                SizedBox(height: 10),
-
-                Wrap(
-                  spacing: 14,
-                  runSpacing: 6,
+                // Row to divide into two columns
+                Row(
                   children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          kv('Date Of Birth', '${model.dateOfBirth}'),
+                          SizedBox(height: 10),
+                          kv('Permanent Number', '${model.permanentNumber}'),
+                          SizedBox(height: 10),
+                          kv('Nationality', '${model.nationality}'),
 
-                    kv('Date Of Birth', '${model.dateOfBirth}'),
-                    SizedBox(height: 10,),
-                    kv('permanentNumber', '${model.permanentNumber}'),
-                    SizedBox(height: 10,),
-                    kv('Nationality', '${model.nationality}'),
-                    SizedBox(height: 10,),
-                    kv('Code', '${model.code}'),
-                    SizedBox(height: 10,),
 
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton.icon(
-                        onPressed: () {
-                          openWikipedia(model);
-                        },
-                        icon: const Icon(Icons.open_in_new, size: 16, color: Colors.white70),
-                        label: const Text(
-                          'See more',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'TitilliumWeb',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        ),
+                        ],
                       ),
                     ),
-
+                    const SizedBox(width: 40), // space between the columns
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10),
+                          kv('Code', '${model.code}'),
+                          kv('Points', '${model.points}'),
+                          SizedBox(height: 10),
+                          kv('WCS', '${model.raceWins}'),
+                        ],
+                      ),
+                    ),
                   ],
+                ),
+
+                // Align the "See more" button at the bottom-right
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      openWikipedia(model);
+                    },
+                    icon: const Icon(
+                      Icons.open_in_new,
+                      size: 16,
+                      color: Colors.white70,
+                    ),
+                    label: const Text(
+                      'See more',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'TitilliumWeb',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -121,7 +123,7 @@ class DriverWidget extends StatelessWidget {
 
   static Widget kv(String k, String v) {
     return SizedBox(
-      width: 160, // fixed makes a neat two-column look
+      width: 160, // fixed width makes a neat two-column look
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -133,7 +135,6 @@ class DriverWidget extends StatelessWidget {
               fontSize: 11,
             ),
           ),
-
           Text(
             v,
             maxLines: 1,
@@ -150,21 +151,18 @@ class DriverWidget extends StatelessWidget {
     );
   }
 
-
   Future<void> openWikipedia(DriverModel d) async {
     final primary = Uri.tryParse(d.url ?? '');
-    final uri = primary ?? Uri.parse(
-      'https://en.wikipedia.org/w/index.php?search=${Uri.encodeComponent(d.name)}',
-    );
+    final uri =
+        primary ?? Uri.parse('https://en.wikipedia.org/w/index.php?search=${Uri.encodeComponent(d.name)}');
 
     await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
   }
 
-  static String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty) return '?';
-    if (parts.length == 1) return parts.first[0].toUpperCase();
-    return (parts.first[0] + parts.last[0]).toUpperCase();
-  }
+  // static String _initials(String name) {
+  //   final parts = name.trim().split(RegExp(r'\s+'));
+  //   if (parts.isEmpty) return '?';
+  //   if (parts.length == 1) return parts.first[0].toUpperCase();
+  //   return (parts.first[0] + parts.last[0]).toUpperCase();
+  // }
 }
-

@@ -1,7 +1,6 @@
 class TeamsModel {
   final int id; // new numeric ID (for API use)
-  // fetch detailed team data from the API when a user opens a team’s detail screen.
-  final String constructorId; // e.g. "ferrari"
+  final String constructorId;
   final String teamName;
   final String nationality;
   final String logo;
@@ -24,7 +23,7 @@ class TeamsModel {
 
   factory TeamsModel.fromJson(Map<String, dynamic> json ,{int? index}) {
     final name = json['name'] ?? '';
-    // 🏁 Map API team names to your asset file names
+
     const logos = {
       'Mercedes': 'assets/images/Mercedes.svg',
       'Red Bull': 'assets/images/redbull.png',
@@ -50,6 +49,19 @@ class TeamsModel {
       'RB F1 Team': 'assets/images/cars/racing_bulls.jpg',
       'Sauber': 'assets/images/cars/kick_sauber.jpg',
     };
+    // season points for team
+    const points = {
+      'McLaren': 756,
+      'Mercedes': 431,
+      'Red Bull': 391,
+      'Ferrari': 378,
+      'Williams': 121,
+      'RB F1 Team': 90,
+      'Haas F1 Team': 73,
+      'Aston Martin': 72,
+      'Sauber': 68,
+      'Alpine F1 Team': 22,
+    };
 
 
     return TeamsModel(
@@ -60,6 +72,7 @@ class TeamsModel {
       teamName: name,
       nationality: json['nationality'] ?? '',
       logo: logos[name] ?? 'assets/images/F1_logo.svg', // fallback if missing
+      points: points[name],
     );
   }
 }

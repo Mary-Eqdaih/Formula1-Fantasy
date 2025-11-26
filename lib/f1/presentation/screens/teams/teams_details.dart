@@ -101,6 +101,11 @@ class _TeamDetailsState extends State<TeamDetails> {
                             fontSize: 14,
                           ),
                         ),
+                        SizedBox(height: 6),
+                        Text(
+                          " points : ${team.points}",
+                          style: TextStyle(color: Colors.white),
+                        ),
                         TextButton.icon(
                           onPressed: () {
                             openWikipedia(team);

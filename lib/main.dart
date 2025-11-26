@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => F1Provider()..init()),
-        // load favs + fetch teams
+        // load favs + fetch teams + fetch drivers
         ChangeNotifierProvider(create: (_) => NotesProvider()..fetchNotes()),
         //   loads notes from db
       ],
@@ -60,6 +60,7 @@ class _MyAppState extends State<MyApp> {
             Routes.addNote: (context) => AddNote(),
             Routes.profile:(context) => Profile(),
             Routes.settings:(context) => Settings(),
+            // Routes.DriverDetails:(context) => DriverDetails(),
 
           },
           debugShowCheckedModeBanner: false,

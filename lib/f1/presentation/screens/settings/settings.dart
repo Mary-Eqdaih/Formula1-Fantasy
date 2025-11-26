@@ -15,12 +15,23 @@ class Settings extends StatelessWidget {
     const f1Red = Color(0xFFE10600);
 
     return Scaffold(
-
+      appBar: AppBar(
+        backgroundColor: darkBg,
+        title: Text(
+          "Settings",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8,
+          ),
+        ),
+      ),
       backgroundColor: darkBg,
       body: SingleChildScrollView(
         child: Column(
+
           children: [
-            // User Profile Overview
             InkWell(
               onTap: (){
                 Navigator.pushNamed(context, Routes.profile);
