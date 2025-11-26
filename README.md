@@ -65,9 +65,9 @@ Tap any image to view full size.
 |-------------|-------------|----------|------------|------------------|
 | ![Sign In](assets/screenshots/sign_in.png) | ![Sign Up](assets/screenshots/sign_up.png) | ![Home](assets/screenshots/home.png) | ![Home 2](assets/screenshots/home(2).png) | ![Race Details](assets/screenshots/race_details.png) |
 
-| **Teams** | **Team Details** | **Leaderboard** |
-|-----------|------------------|-----------------|
-| ![Teams](assets/screenshots/teams.png) | ![Team Details](assets/screenshots/team_details.png) | ![Leaderboard](assets/screenshots/leaderboard.png) | 
+| **Teams** | **Team Details** | **Leaderboard** | **Favorites**                                  |
+|-----------|------------------|-----------------|------------------------------------------------|
+| ![Teams](assets/screenshots/teams.png) | ![Team Details](assets/screenshots/team_details.png) | ![Leaderboard](assets/screenshots/leaderboard.png) | ![Favorites](assets/screenshots/favorites.png) | 
 
 | **Add Note** | **Notes List** | **Edit Note** | **Notes After Edit** |
 |--------------|----------------|---------------|----------------------|
