@@ -50,7 +50,7 @@ class Favorites extends StatelessWidget {
             child: CircleAvatar(
               radius: 10,
               backgroundImage: NetworkImage(
-                'https://placehold.co/600x400/FFFFFF/000000/png',
+                'https://images.unsplash.com/photo-1602043410209-d57816124451?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
               ),
             ),
           ),

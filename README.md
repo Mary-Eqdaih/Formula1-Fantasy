@@ -73,9 +73,9 @@ Tap any image to view full size.
 |--------------|----------------|---------------|----------------------|
 | ![Add Note](assets/screenshots/add_note.png) | ![Notes](assets/screenshots/notes.png) | ![Edit Note](assets/screenshots/edit_note.png) | ![After Edit](assets/screenshots/notes_after_edit.png) |
 
-| **Settings** | **Profile** | **About F1** |
-|--------------|-------------|-------------|
-| ![Settings](assets/screenshots/settings.png) | ![Profile](assets/screenshots/profile.png) |![About F1](assets/screenshots/about_f1.png) |
+| **Settings** | **Profile** | **About F1** | ** Latest F1 News**                     |
+|--------------|-------------|-------------|-----------------------------------------|
+| ![Settings](assets/screenshots/settings.png) | ![Profile](assets/screenshots/profile.png) |![About F1](assets/screenshots/about_f1.png) | ![F1 News](assets/screenshots/news.png) |
 
 
 ---

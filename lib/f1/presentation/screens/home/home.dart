@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:formula1_fantasy/f1/data/models/news_model.dart';
 import 'package:formula1_fantasy/f1/data/models/race_details_model.dart';
 import 'package:formula1_fantasy/f1/data/models/race_info_model.dart';
 import 'package:formula1_fantasy/f1/data/remote/f1_api.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/raceDetails/race_details.dart';
+import 'package:formula1_fantasy/f1/presentation/widgets/news_card_widget.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/race_widget.dart';
+import 'package:formula1_fantasy/routes/routes.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -44,6 +47,47 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    List<NewsModel> news = [
+      NewsModel(
+        title: "McLaren Disqualified from the Race",
+        subtitle:
+            "McLaren removed from 2025 Las Vegas GP results after both cars failed post‑race inspection — skid‑block wear below the 9 mm minimum triggered disqualification.",
+        imgUrl:
+            "https://fansbrands.com/cdn/shop/articles/mclaren_auto_7_2a3f8809-05b4-437b-b723-51f073965a6f.jpg?v=1758158815&width=1600",
+      ),
+      NewsModel(
+        title:
+            "Verstappen Wins Las Vegas GP After McLaren Double Disqualification",
+        subtitle:
+            "Max Verstappen claimed victory at the 2025 Las Vegas Grand Prix after both McLaren cars were excluded post‑race due to excessive skid‑block wear.", // info from F1 report
+        imgUrl:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjpV1F7rqrWdCIkGMuIeCHwGSiCd5cryJ8uA&s",
+      ),
+
+      NewsModel(
+        title: "McLaren Issues Apology Following Double DSQ in Vegas",
+        subtitle:
+            "McLaren acknowledged the disqualification of Lando Norris and Oscar Piastri was unintentional, citing unexpected plank wear due to circuit conditions in Las Vegas.",
+        imgUrl:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjKiGrxsacYpo3C8vcMzND84FD5JJlpwV0lw&s",
+      ),
+
+      NewsModel(
+        title: "Championship Shake‑Up: Norris’ Lead Cut After Vegas DSQ",
+        subtitle:
+            "With the Las Vegas Grand Prix results voided for McLaren, the title battle tightens — Verstappen now closes in, while Piastri moves level on points.",
+        imgUrl:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHsT6HaaMfpwEqoFY6avgFJe_9fnl7uAiioA&s",
+      ),
+
+      NewsModel(
+        title: "Full Vegas GP Results: Russell and Antonelli Promote to Podium",
+        subtitle:
+            "After McLaren’s exclusion, George Russell and Kimi Antonelli were elevated to 2nd and 3rd place respectively in the adjusted 2025 Las Vegas Grand Prix standings.",
+        imgUrl:
+            "https://cdn-5.motorsport.com/images/amp/0mb4DnG2/s1000/andrea-kimi-antonelli-mercedes.jpg",
+      ),
+    ];
     final user = FirebaseAuth.instance.currentUser;
 
     const f1Red = Color(0xFFE10600);
@@ -125,6 +169,31 @@ class _HomeState extends State<Home> {
               '${nextRace!.location} • ${nextRace!.circuit} • ${nextRace!.date} ',
           result: "Upcoming",
         ),
+        const SizedBox(height: 30),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              "Latest F1 News",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontFamily: 'TitilliumWeb',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.news, arguments: news);
+              },
+              child: Text("See More", style: TextStyle(color: f1Red)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        NewsCardWidget(onTap: () {}, model: news[0]),
+
         const SizedBox(height: 30),
       ],
     );

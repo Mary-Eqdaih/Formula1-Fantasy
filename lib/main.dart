@@ -9,6 +9,7 @@ import 'package:formula1_fantasy/f1/presentation/screens/aboutF1/about.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/auth/sign_in.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/auth/sign_up.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/favorites/favorites.dart';
+import 'package:formula1_fantasy/f1/presentation/screens/news/news.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/notes/add_note.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/profile/profile.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/settings/settings.dart';
@@ -60,6 +61,7 @@ class _MyAppState extends State<MyApp> {
             Routes.addNote: (context) => AddNote(),
             Routes.profile:(context) => Profile(),
             Routes.settings:(context) => Settings(),
+            Routes.news:(context) => News(),
             // Routes.DriverDetails:(context) => DriverDetails(),
 
           },

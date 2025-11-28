@@ -10,7 +10,8 @@ class Routes {
     static const String addNote = "/addNote";
     static const String profile = "/profile";
     static const String settings = "/settings";
-    static const String DriverDetails = "/DriverDetails";
+    static const String driverDetails = "/driverDetails";
+    static const String news = "/news";
 
 
 
