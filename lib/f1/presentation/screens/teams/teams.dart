@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formula1_fantasy/f1/cubit/favs_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/teams_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/teams_states.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/teams_widget.dart';
@@ -11,7 +12,6 @@ class Teams extends StatelessWidget {
   Widget build(BuildContext context) {
     const darkBg = Color(0xFF0F0F10);
     const f1Red = Color(0xFFE10600);
-
     return Scaffold(
       backgroundColor: darkBg,
       appBar: AppBar(
@@ -34,13 +34,11 @@ class Teams extends StatelessWidget {
           }
 
           if (state is TeamsSuccessState) {
-            if (state.teams.isEmpty) {
-              return const Center(
-                  child: Text(
-                'No teams found.',
-                style: TextStyle(color: Colors.white54),
-              ));
-            }
+            final favoritesCubit = context.read<FavoritesCubit>();
+            favoritesCubit.setTeams(state.teams);
+            // state.teams is the list of teams that were successfully fetched from the TeamsCubit
+            // store this list of teams in the FavoritesCubit
+            favoritesCubit.loadFavorites();
             return ListView.builder(
               itemCount: state.teams.length,
               itemBuilder: (context, index) {

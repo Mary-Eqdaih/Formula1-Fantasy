@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => NotesCubit()..fetchNotes()),
         BlocProvider(create: (_) => TeamsCubit()..fetchTeams()),
         BlocProvider(create: (_) => DriversCubit()),
-        BlocProvider(create: (_) => FavoritesCubit()..loadFavorites()),
+        BlocProvider(create: (_) => FavoritesCubit()),
 
 
 

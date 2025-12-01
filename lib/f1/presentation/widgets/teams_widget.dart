@@ -101,6 +101,8 @@ class TeamsWidget extends StatelessWidget {
                       isFav
                           ? cubit.removeFromFavorites(team)
                           : cubit.addToFavorites(team);
+
+
                     },
                     icon: Icon(
                       isFav ? Icons.favorite : Icons.favorite_border,

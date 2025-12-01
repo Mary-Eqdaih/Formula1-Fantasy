@@ -37,3 +37,4 @@ class FavoritesCubit extends Cubit<FavoritesStates> {
     await LocalStorageData.saveFavorites(ids);
   }
 }
+
