@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:formula1_fantasy/f1/cubit/favs_cubit.dart';
 import 'package:formula1_fantasy/f1/data/models/teams_model.dart';
-import 'package:formula1_fantasy/f1/presentation/providers/f1_provider.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
-import 'package:provider/provider.dart';  // Make sure to import your TeamsModel class
+import 'package:provider/provider.dart';
 
 class ProfileFavoriteTeamWidget extends StatelessWidget {
   final TeamsModel team;
@@ -11,8 +11,7 @@ class ProfileFavoriteTeamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var teamsProvider = Provider.of<F1Provider>(context);
-
+var cubit = context.read<FavoritesCubit>();
     const darkBg = Color(0xFF0F0F10);
 
     return InkWell(
@@ -46,10 +45,10 @@ class ProfileFavoriteTeamWidget extends StatelessWidget {
             SizedBox(width: 10,),
             IconButton(
               onPressed: () {
-              if (teamsProvider.favs.contains(team)) {
-                teamsProvider.removeFromFavorites(team);
+              if (cubit.favs.contains(team)) {
+                cubit.removeFromFavorites(team);
               } else {
-                teamsProvider.addToFavorites(team);
+                cubit.addToFavorites(team);
               }
             },
                 icon: Icon(Icons.minimize,fontWeight: FontWeight.w900,))

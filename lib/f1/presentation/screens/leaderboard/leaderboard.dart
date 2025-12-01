@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:formula1_fantasy/f1/presentation/providers/f1_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formula1_fantasy/f1/cubit/standings_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/standings_states.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/leaderboard_widget.dart';
-import 'package:provider/provider.dart';
 
 class Leaderboard extends StatefulWidget {
   const Leaderboard({super.key});
@@ -11,57 +12,60 @@ class Leaderboard extends StatefulWidget {
 }
 
 class _LeaderboardState extends State<Leaderboard> {
-
   @override
   Widget build(BuildContext context) {
-    var driversStandingsProvider = Provider.of<F1Provider>(context);
     const darkBg = Color(0xFF0F0F10);
     const f1Red = Color(0xFFE10600);
 
+    return Scaffold(
+      backgroundColor: darkBg,
+      appBar: AppBar(
+        backgroundColor: darkBg,
 
-    return Consumer<F1Provider>(
-      builder: (context,provider,child){
-        if(provider.driversStanding.isEmpty){
-          return Scaffold(
-            backgroundColor: darkBg,
-            appBar: AppBar(
-              backgroundColor: darkBg,
-              title: Text(
-                "Leaderboard",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
-                ),
+        title: Text(
+          "Leaderboard",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.8,
+          ),
+        ),
+      ),
+      body: BlocBuilder<StandingsCubit, StandingsStates>(
+        builder: (context, state) {
+          if (state is StandingsInitialState) {
+            return const SizedBox.shrink();
+          }
+
+          if (state is StandingsLoadingState) {
+            return const Center(child: CircularProgressIndicator(color: f1Red));
+          }
+
+          if (state is StandingsSuccessState) {
+            return ListView.builder(
+              itemCount: state.standings.length,
+              itemBuilder: (context, index) {
+                return LeaderboardWidget(
+                  rank: index + 1,
+                  driver: state.standings[index],
+                );
+              },
+            );
+          }
+
+          if (state is StandingsErrorState) {
+            return Center(
+              child: Text(
+                state.message,
+                style: const TextStyle(color: Colors.white),
               ),
-            ),
-            body: const Center(child: CircularProgressIndicator(color: f1Red,)),
-          );
-        }
-        return Scaffold(
-            backgroundColor: darkBg,
-            appBar: AppBar(
-              backgroundColor: darkBg,
+            );
+          }
 
-              title: Text(
-                "Leaderboard",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
-                ),
-              ),
-            ),
-            body: ListView.builder(
-                itemCount: driversStandingsProvider.driversStanding.length,
-                itemBuilder: (context,index){
-                  return LeaderboardWidget(rank: index+1, driver: driversStandingsProvider.driversStanding[index]);
-                })
-        );
-      },
-
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:formula1_fantasy/f1/presentation/providers/notes_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formula1_fantasy/f1/cubit/notes_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/notes_states.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/notes_widget.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
-import 'package:provider/provider.dart';
 
 class Notes extends StatefulWidget {
   const Notes({super.key});
@@ -12,19 +13,8 @@ class Notes extends StatefulWidget {
 }
 
 class _NotesState extends State<Notes> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController contentController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-    // List<NotesModel> notes = [
-    //   NotesModel(
-    //     title: "title",
-    //     content: "content",
-    //     date: "${DateTime.now().day}/${DateTime.now().month}",
-    //   ),
-    // ];
-
     const darkBg = Color(0xFF0F0F10);
     const f1Red = Color(0xFFE10600);
 
@@ -39,34 +29,52 @@ class _NotesState extends State<Notes> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Consumer<NotesProvider>(
-        builder: (context, provider, child) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: provider.notes.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No race notes yet.\nTap + to log your first Grand Prix! 🏎️💨 ',
+      body: BlocBuilder<NotesCubit, NotesState>(
+        builder: (context, state) {
+          if (state is NotesLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(color: f1Red),
+            );
+          }
 
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white54, fontSize: 16),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: provider.notes.length,
-                    itemBuilder: (context, index) {
-                      return NotesWidget(
-                        model: provider.notes[index],
-                        onDismissed: (_) {
-                          provider.deleteNote(provider.notes[index]);
-                        },
-                      );
-                    },
-                  ),
-          );
+          if (state is NotesSuccessState) {
+            if (state.notes.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No race notes yet.\nTap + to log your first Grand Prix! 🏎️💨 ',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white54, fontSize: 16),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              itemCount: state.notes.length,
+              itemBuilder: (context, index) {
+                return NotesWidget(
+                  model: state.notes[index],
+                  onDismissed: (_) {
+                    context.read<NotesCubit>().deleteNote(state.notes[index]);
+                  },
+                );
+              },
+            );
+          }
+
+          // Handle Error State
+          if (state is NotesErrorState) {
+            return Center(
+              child: Text(
+                'Error: ${state.message}',
+                style: const TextStyle(color: Colors.white),
+              ),
+            );
+          }
+
+          // Fallback for initial or other states
+          return const SizedBox.shrink();
         },
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, Routes.addNote);

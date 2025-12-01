@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:formula1_fantasy/f1/cubit/notes_cubit.dart';
 import 'package:formula1_fantasy/f1/data/models/notes_model.dart';
-import 'package:formula1_fantasy/f1/presentation/providers/notes_provider.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/f1_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +42,7 @@ class NotesWidget extends StatelessWidget {
 
       key: UniqueKey(),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white10,
           borderRadius: BorderRadius.circular(10),
@@ -129,10 +129,9 @@ class NotesWidget extends StatelessWidget {
                                   id: model.id,
                                 );
 
-                                Provider.of<NotesProvider>(
-                                  context,
-                                  listen: false,
-                                ).updateNote(updatedNote);
+                                context.read<NotesCubit>().updateNote(
+                                  updatedNote,
+                                );
                                 Navigator.pop(context);
                               },
                               child: Text(

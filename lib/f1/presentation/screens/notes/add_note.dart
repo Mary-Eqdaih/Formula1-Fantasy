@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:formula1_fantasy/f1/cubit/notes_cubit.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/pills_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:formula1_fantasy/f1/data/models/notes_model.dart';
-import 'package:formula1_fantasy/f1/presentation/providers/notes_provider.dart';
 
 class AddNote extends StatefulWidget {
   const AddNote({super.key});
@@ -23,7 +23,7 @@ class _AddNoteState extends State<AddNote> {
 
   @override
   Widget build(BuildContext context) {
-    var notesProvider = context.read<NotesProvider>();
+    var notesCubit = context.read<NotesCubit>();
     return Scaffold(
       backgroundColor: darkBg,
       appBar: AppBar(
@@ -172,7 +172,7 @@ class _AddNoteState extends State<AddNote> {
                         content: contentController.text,
                         date: "${DateTime.now().day}/${DateTime.now().month}",
                       );
-                      notesProvider.addNote(note);
+                      notesCubit.addNote(note);
                       titleController.clear();
                       contentController.clear();
                       Navigator.pop(context);

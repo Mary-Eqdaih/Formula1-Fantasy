@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:formula1_fantasy/f1/presentation/providers/f1_provider.dart';
+import 'package:formula1_fantasy/f1/cubit/fav_states.dart';
+import 'package:formula1_fantasy/f1/cubit/favs_cubit.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/teams_widget.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
-import 'package:provider/provider.dart';
 
 class Favorites extends StatelessWidget {
   const Favorites({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var teamsProvider = Provider.of<F1Provider>(context);
     const darkBg = Color(0xFF0F0F10);
 
     return Scaffold(
@@ -77,41 +77,47 @@ class Favorites extends StatelessWidget {
         ],
       ),
       backgroundColor: darkBg,
-      body: teamsProvider.favs.isEmpty
-          ? const Center(
-        child: Text(
-          "Nothing Added to Favorites",
-          style: TextStyle(color: Colors.white),
-        ),
-      )
-          : Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Align(alignment: AlignmentGeometry.topLeft,
-                    child: Text(
-                      "Your Favorite Teams",  // Title for the screen
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                      child: ListView.builder(
-                        itemCount: teamsProvider.favs.length,
-                        itemBuilder: (context, index) {
-                          return TeamsWidget(model: teamsProvider.favs[index],isUsedInFavorites: true, );
-                        },
-                      ),
-                    ),
-              ],
-            ),
-          ),
+      body:
+           BlocBuilder<FavoritesCubit,FavoritesStates>(
+             builder: (context,state ){
+               if(state is FavoritesSuccessState){
+                 if(state.favs.isEmpty){
+                   return Center(child: Text("Nothing Added To Favorites",style: TextStyle(color: Colors.white),),);
+                 }
+
+                 return   Padding(
+                   padding: const EdgeInsets.all(16.0),
+                   child: Column(
+                     children: [
+                       const Padding(
+                         padding: EdgeInsets.all(16.0),
+                         child: Align(alignment: AlignmentGeometry.topLeft,
+                           child: Text(
+                             "Your Favorite Teams",  // Title for the screen
+                             style: TextStyle(
+                               color: Colors.white,
+                               fontSize: 22,
+                               fontWeight: FontWeight.bold,
+                             ),
+                           ),
+                         ),
+                       ),
+                       Expanded(
+                         child: ListView.builder(
+                           itemCount: state.favs.length,
+                           itemBuilder: (context, index) {
+                             return TeamsWidget(team: state.favs[index],isUsedInFavorites: true, );
+                           },
+                         ),
+                       ),
+                     ],
+                   ),
+                 );
+               }
+               return SizedBox.shrink();
+             },
+
+           ),
 
 
     );
