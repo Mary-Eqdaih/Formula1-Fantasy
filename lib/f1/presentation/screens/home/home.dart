@@ -1,5 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_states.dart';
 import 'package:formula1_fantasy/f1/data/models/news_model.dart';
 import 'package:formula1_fantasy/f1/data/models/race_details_model.dart';
 import 'package:formula1_fantasy/f1/data/models/race_info_model.dart';
@@ -88,7 +90,7 @@ class _HomeState extends State<Home> {
             "https://cdn-5.motorsport.com/images/amp/0mb4DnG2/s1000/andrea-kimi-antonelli-mercedes.jpg",
       ),
     ];
-    final user = FirebaseAuth.instance.currentUser;
+    // final user = FirebaseAuth.instance.currentUser;
 
     const f1Red = Color(0xFFE10600);
     const gray = Color(0xFF424242);
@@ -111,14 +113,24 @@ class _HomeState extends State<Home> {
               ),
             ),
             SizedBox(width: 5),
-            Text(
-              user?.displayName ?? "Guest",
-              style: TextStyle(
-                color: Colors.yellow,
-                fontSize: 23,
-                fontWeight: FontWeight.bold,
-                fontFamily: "TitilliumWeb",
-              ),
+            BlocBuilder<ProfileCubit, ProfileStates>(
+              builder: (context, state) {
+                if (state is ProfileSuccessState) {
+                  return Text(
+                    "${state.profileModel.name}",
+                    style: TextStyle(
+                      color: Colors.yellow,
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "TitilliumWeb",
+                    ),
+                  );
+                }
+                if(state is ProfileErrorState){
+                  return Text(state.error);
+                }
+                return Text("Guest");
+              },
             ),
             SizedBox(width: 10),
             Icon(Icons.sports_motorsports, color: Colors.white, size: 30),

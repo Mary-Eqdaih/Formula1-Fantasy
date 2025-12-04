@@ -3,10 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_state.dart';
-import 'package:formula1_fantasy/f1/data/firebase/firebase.dart';
-
+import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
+import 'package:formula1_fantasy/f1/data/models/profile_model.dart';
 import '../../../../routes/routes.dart';
-import '../../../data/local/local_storage.dart';
 import '../../widgets/Custom_text_field.dart';
 
 class SignUp extends StatelessWidget {
@@ -28,6 +27,7 @@ class SignUp extends StatelessWidget {
     return BlocListener<AuthCubit, AuthStates>(
       listener: (context, state) {
         if (state is AuthSuccessState) {
+          saveUserData(context, state.user.uid);
           Navigator.pushReplacementNamed(context, Routes.home);
         } else if (state is AuthErrorState) {
           ScaffoldMessenger.of(
@@ -176,18 +176,19 @@ class SignUp extends StatelessWidget {
                             builder: (context, state) {
                               return state is AuthLoadingState
                                   ? ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: f1Red,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        30,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: f1Red,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            30,
+                                          ),
+                                          side: BorderSide.none,
+                                        ),
                                       ),
-                                      side: BorderSide.none,
-                                    ),
-                                  ),
-                                  onPressed: (){},
-                                  child: CircularProgressIndicator())
+                                      onPressed: () {},
+                                      child: CircularProgressIndicator(),
+                                    )
                                   : ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: f1Red,
@@ -232,9 +233,18 @@ class SignUp extends StatelessWidget {
       context.read<AuthCubit>().signUp(
         emailController.text,
         passwordController.text,
-        usernameController.text
+        usernameController.text,
       );
     }
+  }
+
+  saveUserData(BuildContext context, String id) {
+    final profile = ProfileModel(
+      name: usernameController.text,
+      email: emailController.text,
+      bio: "",
+    );
+    context.read<ProfileCubit>().saveUserData(profile);
   }
 }
 

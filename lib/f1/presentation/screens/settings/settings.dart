@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_states.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/settings_widget.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
 
@@ -51,22 +52,38 @@ class Settings extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          FirebaseAuth.instance.currentUser!.displayName!,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          FirebaseAuth.instance.currentUser!.email!,
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                      ],
+                    BlocBuilder<ProfileCubit,ProfileStates>(
+                      builder: (context,state){
+                        if(state is ProfileSuccessState){
+                          return  Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                              "${ state.profileModel.name}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "${ state.profileModel.email}",
+                                style: TextStyle(color: Colors.white70, fontSize: 14),
+                              ),
+                            ],
+                          );
+                        }
+                        if (state is ProfileErrorState) {
+                          return Center(
+                            child: Text(
+                              "Failed to load profile data",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                        }
+                        return SizedBox.shrink();
+                      },
+
                     ),
                   ],
                 ),

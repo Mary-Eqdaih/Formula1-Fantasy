@@ -5,6 +5,7 @@ import 'package:formula1_fantasy/f1/cubit/auth_state.dart';
 import 'package:formula1_fantasy/f1/cubit/drivers_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/favs_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/notes_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/standings_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/teams_cubit.dart';
 import 'package:formula1_fantasy/f1/data/local/notes_DB.dart';
@@ -42,16 +43,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-
         BlocProvider(create: (_) => StandingsCubit()..fetchStandings()),
         BlocProvider(create: (_) => NotesCubit()..fetchNotes()),
         BlocProvider(create: (_) => TeamsCubit()..fetchTeams()),
         BlocProvider(create: (_) => DriversCubit()),
         BlocProvider(create: (_) => FavoritesCubit()),
-
-
-
-
+        BlocProvider(create: (_) => ProfileCubit()..fetchUserData()),
       ],
 
       child: BlocProvider<AuthCubit>(
@@ -66,18 +63,18 @@ class _MyAppState extends State<MyApp> {
             Routes.notes: (context) => Notes(),
             Routes.aboutF1: (context) => aboutF1(),
             Routes.addNote: (context) => AddNote(),
-            Routes.profile:(context) => Profile(),
-            Routes.settings:(context) => Settings(),
-            Routes.news:(context) => News(),
-            // Routes.DriverDetails:(context) => DriverDetails(),
+            Routes.profile: (context) => Profile(),
+            Routes.settings: (context) => Settings(),
+            Routes.news: (context) => News(),
 
+            // Routes.DriverDetails:(context) => DriverDetails(),
           },
           debugShowCheckedModeBanner: false,
           // home: HomeScreen(),
-          home: BlocBuilder<AuthCubit,AuthStates>(builder: (BuildContext context, state) {
-
-            return state is AuthSuccessState ? HomeScreen(): SignIn();
-          },
+          home: BlocBuilder<AuthCubit, AuthStates>(
+            builder: (BuildContext context, state) {
+              return state is AuthSuccessState ? HomeScreen() : SignIn();
+            },
           ),
         ),
       ),
