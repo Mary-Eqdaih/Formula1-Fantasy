@@ -129,7 +129,7 @@ class _HomeState extends State<Home> {
                 if(state is ProfileErrorState){
                   return Text(state.error);
                 }
-                return Text("Guest");
+                return Text("Guest",style: TextStyle(color: Colors.yellow,fontSize: 23),);
               },
             ),
             SizedBox(width: 10),

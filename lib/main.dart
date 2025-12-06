@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_cubit.dart';
@@ -23,16 +24,43 @@ import 'f1/presentation/screens/home/home_screen.dart';
 import 'f1/presentation/screens/notes/notes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Supabase.initialize(
+    url: 'https://eifbpydagmgzilcphuwi.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpZmJweWRhZ21nemlsY3BodXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4NDUzMjYsImV4cCI6MjA4MDQyMTMyNn0.buEAp_KJhNQb8MOYlGP-y51y4E73a8iHQ4dC3T1Gvf4',
+    authOptions: const FlutterAuthClientOptions(
+      // This is important for session persistence
+      autoRefreshToken: true,
+    ),
+  );
+
+
+  // 3. Bridge Firebase Auth with Supabase Auth
+  // This listens to Firebase auth state changes and updates Supabase client.
+  FirebaseAuth.instance.idTokenChanges().listen((user) {
+    if (user != null) {
+      // When a user is logged in with Firebase, get their token
+      user.getIdToken().then((jwt) {
+        if (jwt != null) {
+          // Use the JWT to sign in to Supabase
+          Supabase.instance.client.auth.setSession(jwt);
+        }
+      });
+    } else {
+      // When the user logs out from Firebase, sign out from Supabase as well
+      Supabase.instance.client.auth.signOut();
+    }
+  });
   await NotesDB.init();
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();

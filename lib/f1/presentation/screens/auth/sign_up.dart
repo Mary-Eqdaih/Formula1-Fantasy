@@ -243,6 +243,7 @@ class SignUp extends StatelessWidget {
       name: usernameController.text,
       email: emailController.text,
       bio: "",
+      photoUrl: "",
     );
     context.read<ProfileCubit>().saveUserData(profile);
   }

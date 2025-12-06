@@ -23,7 +23,6 @@ class _ProfileState extends State<Profile> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     const f1Red = Color(0xFFE10600);
@@ -93,7 +92,14 @@ class _ProfileState extends State<Profile> {
         ],
       ),
       backgroundColor: darkBg,
-      body: BlocBuilder<ProfileCubit, ProfileStates>(
+      body: BlocConsumer<ProfileCubit, ProfileStates>(
+        listener: (context, state) {
+          if (state is ProfileErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+            );
+          }
+        },
         builder: (context, state) {
           if (state is ProfileErrorState) {
             return const Center(
@@ -107,6 +113,7 @@ class _ProfileState extends State<Profile> {
             return const Center(child: CircularProgressIndicator(color: f1Red));
           }
           if (state is ProfileSuccessState) {
+
             return SingleChildScrollView(
               child: Center(
                 child: Column(
@@ -143,28 +150,45 @@ class _ProfileState extends State<Profile> {
                                       ),
                                       content: SingleChildScrollView(
                                         child: SizedBox(
-                                          width: MediaQuery.of(context).size.width,
+                                          width: MediaQuery.of(
+                                            context,
+                                          ).size.width,
                                           child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Stack(
                                                 children: [
                                                   CircleAvatar(
                                                     radius: 50,
                                                     backgroundColor: gray,
-                                                    backgroundImage:  NetworkImage(
-                                                      'https://images.unsplash.com/photo-1602043410209-d57816124451?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                                                    ) ,
+                                                    backgroundImage:
+                                                        state.profileModel.photoUrl ==
+                                                            null
+                                                        ? AssetImage(
+                                                            "assets/person.jpeg",
+                                                          )
+                                                        : NetworkImage(
+                                                          state.profileModel.photoUrl!,
+                                                          ),
                                                   ),
                                                   Positioned(
                                                     bottom: -10,
                                                     right: -10,
                                                     child: IconButton(
-                                                      onPressed:(){}
-                                                      ,
-                                                      icon: Icon(
+                                                      // image picker only
+                                                      onPressed: () {
+                                                        //   Pick Image From Gallery and upload to supabase
+                                                        context
+                                                            .read<
+                                                              ProfileCubit
+                                                            >()
+                                                            .uploadImage();
+                                                      },
+                                                      icon: const Icon(
                                                         Icons.camera_alt,
                                                       ),
                                                     ),
@@ -184,7 +208,9 @@ class _ProfileState extends State<Profile> {
                                               const SizedBox(height: 10),
                                               CustomTextField(
                                                 controller: nameController,
-                                                hint: state.profileModel.name ?? "",
+                                                hint:
+                                                    state.profileModel.name ??
+                                                    "",
                                               ),
                                               const SizedBox(height: 16),
                                               const Align(
@@ -199,7 +225,9 @@ class _ProfileState extends State<Profile> {
                                               const SizedBox(height: 10),
                                               CustomTextField(
                                                 controller: emailController,
-                                                hint: state.profileModel.email ?? "",
+                                                hint:
+                                                    state.profileModel.email ??
+                                                    "",
                                               ),
                                               const SizedBox(height: 16),
                                               const Align(
@@ -214,13 +242,16 @@ class _ProfileState extends State<Profile> {
                                               const SizedBox(height: 10),
                                               CustomTextField(
                                                 controller: bioController,
-                                                hint: state.profileModel.bio ?? "Bio",
+                                                hint:
+                                                    state.profileModel.bio ??
+                                                    "Bio",
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                      actionsAlignment: MainAxisAlignment.spaceBetween,
+                                      actionsAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       actions: [
                                         TextButton(
                                           onPressed: () {
@@ -231,29 +262,41 @@ class _ProfileState extends State<Profile> {
                                           ),
                                           child: const Text("Cancel"),
                                         ),
+                                        // save and upload pic to supabase ... update other info to firestore
                                         ElevatedButton(
                                           onPressed: () {
+
                                             // Only update the fields that have changed
-                                            String name = nameController.text.isNotEmpty
+                                            String name =
+                                                nameController.text.isNotEmpty
                                                 ? nameController.text
                                                 : state.profileModel.name ?? '';
 
-                                            String email = emailController.text.isNotEmpty
+                                            String email =
+                                                emailController.text.isNotEmpty
                                                 ? emailController.text
-                                                : state.profileModel.email ?? '';
+                                                : state.profileModel.email ??
+                                                      '';
 
-                                            String bio = bioController.text.isNotEmpty
+                                            String bio =
+                                                bioController.text.isNotEmpty
                                                 ? bioController.text
                                                 : state.profileModel.bio ?? '';
 
-                                            var updatedProfileModel = ProfileModel(
-                                              bio: bio,
-                                              name: name,
-                                              email: email,
-                                              // photoUrl: imageUrl,
-                                            );
+                                            var updatedProfileModel =
+                                                ProfileModel(
+                                                  bio: bio,
+                                                  name: name,
+                                                  email: email,
+                                                   photoUrl: state.profileModel.photoUrl
+                                                  ,
+                                                );
 
-                                            context.read<ProfileCubit>().updateUserData(updatedProfileModel);
+                                            context
+                                                .read<ProfileCubit>()
+                                                .updateUserData(
+                                                  updatedProfileModel,
+                                                );
                                             Navigator.pop(dialogContext);
                                           },
                                           style: ElevatedButton.styleFrom(
@@ -261,7 +304,8 @@ class _ProfileState extends State<Profile> {
                                             foregroundColor: Colors.white,
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(30),
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
                                             ),
                                           ),
                                           child: const Text("Save"),
@@ -273,6 +317,7 @@ class _ProfileState extends State<Profile> {
                               },
                             );
                           },
+                          // Edit Button
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -290,18 +335,17 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                     ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: gray,
-                          backgroundImage: NetworkImage(
-                            'https://images.unsplash.com/photo-1602043410209-d57816124451?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                          ) ,
-                        ),
 
-                      ],
+                    // Avatar
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: gray,
+                      backgroundImage:
+                         state.profileModel.photoUrl == null
+                          ? AssetImage("assets/person.jpeg")
+                          : NetworkImage(
+                           state.profileModel.photoUrl!,
+                            ),
                     ),
                     const SizedBox(height: 20),
                     // name
@@ -317,10 +361,16 @@ class _ProfileState extends State<Profile> {
                     ),
                     // bio
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
+                      ),
                       child: Text(
                         state.profileModel.bio ?? "No Bio",
-                        style: const TextStyle(color: Colors.yellow, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.yellow,
+                          fontSize: 16,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),

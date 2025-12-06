@@ -2,16 +2,16 @@ class ProfileModel {
   String? name;
   String? email;
   String? bio;
-  // String? photoUrl;
+  String? photoUrl;
 
   ProfileModel({this.name, this.email, this.bio,
-    // this.photoUrl
+    this.photoUrl
   });
   ProfileModel.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     email = json['email'];
     bio = json['bio'];
-    // photoUrl = json['photoUrl'];
+    photoUrl = json['photoUrl'];
     }
   // Data returned from firestore is a map ... so we have to convert it to dart object (ProfileModel)
 
@@ -20,7 +20,7 @@ class ProfileModel {
     data['name'] = name;
     data['email'] = email;
     data['bio'] = bio;
-    // data['photoUrl'] = photoUrl;
+    data['photoUrl'] = photoUrl;
     return data;
   }
 

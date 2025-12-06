@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_states.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/home/home.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/leaderboard/leaderboard.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/settings/settings.dart';
@@ -176,16 +179,30 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {},
             icon: Icon(Icons.notifications, color: Colors.white),
           ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, Routes.profile);
+
+
+          BlocBuilder<ProfileCubit,ProfileStates>(
+            builder: (BuildContext context, ProfileStates state) {
+              if(state is ProfileLoadingState){
+                return CircularProgressIndicator(color: f1Red,);
+              }
+              if(state is ProfileSuccessState){
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.profile);
+                  },
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundImage: state.profileModel.photoUrl==null?AssetImage("assets/person.jpeg"):
+                    NetworkImage(
+                      state.profileModel.photoUrl!
+                    ),
+                  ),
+                );
+              }
+              return SizedBox.shrink();
             },
-            child: CircleAvatar(
-              radius: 10,
-              backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1602043410209-d57816124451?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              ),
-            ),
+
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),

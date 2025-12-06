@@ -45,11 +45,24 @@ class Settings extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(
-                        "https://images.unsplash.com/photo-1602043410209-d57816124451?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                      ),
+                    BlocBuilder<ProfileCubit,ProfileStates>(
+                      builder: (context,state){
+                        if(state is ProfileLoadingState){
+                          return CircularProgressIndicator(color: f1Red,);
+                        }
+                        if(state is ProfileSuccessState){
+                          return   CircleAvatar(
+                            radius: 40,
+                            backgroundImage:state.profileModel.photoUrl == null ? AssetImage("assets/person.jpeg"):
+                            NetworkImage(
+                              state.profileModel.photoUrl!,
+
+                            ),
+                          );
+                        }
+                        return SizedBox.shrink();
+                      },
+
                     ),
                     const SizedBox(width: 20),
                     BlocBuilder<ProfileCubit,ProfileStates>(

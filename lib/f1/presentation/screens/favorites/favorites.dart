@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:formula1_fantasy/f1/cubit/auth_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/fav_states.dart';
 import 'package:formula1_fantasy/f1/cubit/favs_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_states.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/teams_widget.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
 
@@ -12,6 +15,8 @@ class Favorites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const darkBg = Color(0xFF0F0F10);
+    const f1Red = Color(0xFFE10600);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -43,16 +48,28 @@ class Favorites extends StatelessWidget {
             onPressed: () {},
             icon: Icon(Icons.notifications, color: Colors.white),
           ),
-          InkWell(
-            onTap: () {
-              Navigator.pushReplacementNamed(context, Routes.profile);
+          BlocBuilder<ProfileCubit,ProfileStates>(
+            builder: (BuildContext context, ProfileStates state) {
+              if(state is ProfileLoadingState){
+                return CircularProgressIndicator(color: f1Red,);
+              }
+              if(state is ProfileSuccessState){
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.profile);
+                  },
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundImage: state.profileModel.photoUrl==null?AssetImage("assets/person.jpeg"):
+                    NetworkImage(
+                        state.profileModel.photoUrl!
+                    ),
+                  ),
+                );
+              }
+              return SizedBox.shrink();
             },
-            child: CircleAvatar(
-              radius: 10,
-              backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1602043410209-d57816124451?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              ),
-            ),
+
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
@@ -60,6 +77,10 @@ class Favorites extends StatelessWidget {
               switch (value) {
                 case 'about':
                   Navigator.pushNamed(context, Routes.aboutF1); // open About F1
+                  break;
+                case 'signOut':
+                  await context.read<AuthCubit>().signOut();
+                  Navigator.pushNamed(context, Routes.signIn);
                   break;
               }
             },
@@ -69,6 +90,13 @@ class Favorites extends StatelessWidget {
                 child: ListTile(
                   leading: Icon(Icons.info_outline),
                   title: Text('About F1'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'signOut',
+                child: ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text('Sign Out'),
                 ),
               ),
             ],
