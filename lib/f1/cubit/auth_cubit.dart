@@ -49,15 +49,46 @@ class AuthCubit extends Cubit<AuthStates> {
     }
   }
 
-  // sign out
-  signOut() async {
-    await FirebaseAuthServices.signOut();
-    emit(AuthInitialState());
+  Future<void> signOut() async {
+    try {
+      await FirebaseAuthServices.signOut();
+      emit(AuthInitialState());
+    } catch (e) {
+      emit(AuthErrorState('Error signing out: $e'));
+    }
   }
 
-  // Future<void> update(String name, String email) async {
-  //   emit(AuthLoadingState());
-  //   await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
-  //   emit(AuthSuccessState(FirebaseAuth.instance.currentUser!));
-  // }
+  Future<String?> deleteAccount(String password) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return "No user is currently signed in."; // Error message if no user is logged in
+      }
+
+      // Create a credential to re-authenticate
+      final cred = EmailAuthProvider.credential(email: user.email!, password: password);
+
+      // Re-authenticate the user before deleting
+      await user.reauthenticateWithCredential(cred);
+
+      // If re-authentication is successful, delete the account
+      await user.delete();
+      await FirebaseAuthServices.signOut();
+      emit(AuthInitialState()); // Emit initial state after deletion
+      return null; // Return null on success (indicating no error)
+
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        return 'The password you entered is incorrect. Please try again.'; // Message for wrong password
+      }
+      return e.message; // Return other Firebase error messages
+    } catch (e) {
+      // Catch any other general errors
+      return 'An unexpected error occurred: ${e.toString()}';
+    }
+  }
+
+
+
+
 }

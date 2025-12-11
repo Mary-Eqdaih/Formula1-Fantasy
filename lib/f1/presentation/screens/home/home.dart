@@ -113,6 +113,7 @@ class _HomeState extends State<Home> {
     ];
     const f1Red = Color(0xFFE10600);
     const gray = Color(0xFF424242);
+    const darkBg = Color(0xFF0F0F10);
 
     // If the data is still loading, show a loading spinner
     if (loading) {
@@ -120,135 +121,143 @@ class _HomeState extends State<Home> {
     }
 
 
-    return ListView(
-      children: [
-        // Display user profile and greeting
-        Row(
-          children: [
-            Text(
-              "Hello",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                fontFamily: "TitilliumWeb",
-              ),
-            ),
-            SizedBox(width: 5),
-            BlocBuilder<ProfileCubit, ProfileStates>(
-              builder: (context, state) {
-                if (state is ProfileSuccessState) {
-                  return Text(
-                    "${state.profileModel.name}",
-                    style: TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 23,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "TitilliumWeb",
-                    ),
-                  );
-                }
-                if (state is ProfileErrorState) {
-                  return Text("Guest", style: TextStyle(color: Colors.yellow, fontSize: 23));
-                }
-                return SizedBox.shrink(); // Fallback if profile state is loading
-              },
-            ),
-            SizedBox(width: 10),
-            Icon(Icons.sports_motorsports, color: Colors.white, size: 30),
-          ],
-        ),
-        SizedBox(height: 20),
-        const Text(
-          "Latest Race Result",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontFamily: 'TitilliumWeb',
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        RaceCardWidget(
-          title: latestRace!.title,
-          color: f1Red,
-          subtitle:
-          '${latestRace!.location} • ${latestRace!.circuit} • ${latestRace!.date}',
-          result: 'Winner: ${latestRace!.winner} (${latestRace!.team})',
-          onTap: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RaceDetailsScreen(race: raceDetails!),
-              ),
-            );
-          },
-        ),
+    return Scaffold(
+      backgroundColor: darkBg,
+      body: RefreshIndicator( color: f1Red,
+        onRefresh: (){
+        fetchData();
 
-        const SizedBox(height: 30),
-        const Text(
-          "Upcoming Race",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontFamily: 'TitilliumWeb',
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        nextRace != null && nextRace!.title != 'No upcoming race'
-            ? RaceCardWidget(
-          title: nextRace!.title,
-          color: gray,
-          subtitle: '${nextRace!.location} • ${nextRace!.circuit} • ${nextRace!.date}',
-          result: "Upcoming",
-        )
-            : Card(
-          color: gray,
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Center(
-              child: Text(
-                "The F1 season for this year has concluded. See you next year!",
-                textAlign: TextAlign.center,
+        return Future.delayed(Duration(seconds: 1));
+      },child: ListView(
+        children: [
+          // Display user profile and greeting
+          Row(
+            children: [
+              Text(
+                "Hello",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "TitilliumWeb",
+                ),
+              ),
+              SizedBox(width: 5),
+              BlocBuilder<ProfileCubit, ProfileStates>(
+                builder: (context, state) {
+                  if (state is ProfileSuccessState) {
+                    return Text(
+                      "${state.profileModel.name}",
+                      style: TextStyle(
+                        color: Colors.yellow,
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "TitilliumWeb",
+                      ),
+                    );
+                  }
+                  if (state is ProfileErrorState) {
+                    return Text("Guest", style: TextStyle(color: Colors.yellow, fontSize: 23));
+                  }
+                  return SizedBox.shrink(); // Fallback if profile state is loading
+                },
+              ),
+              SizedBox(width: 10),
+              Icon(Icons.sports_motorsports, color: Colors.white, size: 30),
+            ],
+          ),
+          SizedBox(height: 20),
+          const Text(
+            "Latest Race Result",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'TitilliumWeb',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          RaceCardWidget(
+            title: latestRace!.title,
+            color: f1Red,
+            subtitle:
+            '${latestRace!.location} • ${latestRace!.circuit} • ${latestRace!.date}',
+            result: 'Winner: ${latestRace!.winner} (${latestRace!.team})',
+            onTap: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RaceDetailsScreen(race: raceDetails!),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 30),
+          const Text(
+            "Upcoming Race",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'TitilliumWeb',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          nextRace != null && nextRace!.title != 'No upcoming race'
+              ? RaceCardWidget(
+            title: nextRace!.title,
+            color: gray,
+            subtitle: '${nextRace!.location} • ${nextRace!.circuit} • ${nextRace!.date}',
+            result: "Upcoming",
+          )
+              : Card(
+            color: gray,
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  "The F1 season for this year has concluded. See you next year!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 30),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Latest F1 News",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontFamily: 'TitilliumWeb',
-                fontWeight: FontWeight.bold,
+          const SizedBox(height: 30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Latest F1 News",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontFamily: 'TitilliumWeb',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pushNamed(context, Routes.news, arguments: news);
-              },
-              child: Text("See More", style: TextStyle(color: f1Red)),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        NewsCardWidget(onTap: () {}, model: news[0]),
-        const SizedBox(height: 30),
-      ],
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.news, arguments: news);
+                },
+                child: Text("See More", style: TextStyle(color: f1Red)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          NewsCardWidget(onTap: () {}, model: news[0]),
+          const SizedBox(height: 30),
+        ],
+      ),)
     );
   }
 }

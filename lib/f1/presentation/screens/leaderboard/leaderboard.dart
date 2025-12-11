@@ -32,39 +32,72 @@ class _LeaderboardState extends State<Leaderboard> {
           ),
         ),
       ),
-      body: BlocBuilder<StandingsCubit, StandingsStates>(
-        builder: (context, state) {
-          if (state is StandingsInitialState) {
-            return const SizedBox.shrink();
-          }
-
-          if (state is StandingsLoadingState) {
-            return const Center(child: CircularProgressIndicator(color: f1Red));
-          }
-
-          if (state is StandingsSuccessState) {
-            return ListView.builder(
-              itemCount: state.standings.length,
-              itemBuilder: (context, index) {
-                return LeaderboardWidget(
-                  rank: index + 1,
-                  driver: state.standings[index],
-                );
-              },
-            );
-          }
-
-          if (state is StandingsErrorState) {
-            return Center(
-              child: Text(
-               "Cant Load Leaderboard",
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
-          }
-
-          return const SizedBox.shrink();
+      body: RefreshIndicator(
+        color: f1Red,
+        onRefresh: (){
+          context.read<StandingsCubit>().fetchStandings();
+          return Future.delayed(Duration(seconds: 1));
         },
+        child: BlocBuilder<StandingsCubit, StandingsStates>(
+          builder: (context, state) {
+            if (state is StandingsInitialState) {
+              return const SizedBox.shrink();
+            }
+
+            if (state is StandingsLoadingState) {
+              return const Center(child: CircularProgressIndicator(color: f1Red));
+            }
+
+            if (state is StandingsSuccessState) {
+              return ListView.builder(
+                itemCount: state.standings.length,
+                itemBuilder: (context, index) {
+                  return LeaderboardWidget(
+                    rank: index + 1,
+                    driver: state.standings[index],
+                  );
+                },
+              );
+            }
+
+            if (state is StandingsErrorState) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                     "Can't Load Leaderboard",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 10,),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: f1Red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                      ),
+                      onPressed: () {
+
+                        context.read<StandingsCubit>().fetchStandings();
+                      },
+                      child: const Text(
+                        "Refresh",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }

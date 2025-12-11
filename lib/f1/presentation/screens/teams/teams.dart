@@ -27,37 +27,71 @@ class Teams extends StatelessWidget {
           ),
         ),
       ),
-      body: BlocBuilder<TeamsCubit, TeamsState>(
-        builder: (context, state) {
-          if (state is TeamsLoadingState) {
-            return const Center(child: CircularProgressIndicator(color: f1Red));
-          }
-
-          if (state is TeamsSuccessState) {
-            final favoritesCubit = context.read<FavoritesCubit>();
-            favoritesCubit.setTeams(state.teams);
-            // state.teams is the list of teams that were successfully fetched from the TeamsCubit
-            // store this list of teams in the FavoritesCubit
-            favoritesCubit.loadFavorites();
-            return ListView.builder(
-              itemCount: state.teams.length,
-              itemBuilder: (context, index) {
-                return TeamsWidget(team: state.teams[index]);
-              },
-            );
-          }
-
-          if (state is TeamsErrorState) {
-            return const Center(
-              child: Text(
-                'Could not load teams.',
-                style: TextStyle(color: Colors.white),
-              ),
-            );
-          }
-
-          return const SizedBox.shrink(); // Fallback for other states
+      body: RefreshIndicator(
+        onRefresh: (){
+          context.read<TeamsCubit>().fetchTeams();
+          return Future.delayed(Duration(seconds: 1));
         },
+        color: f1Red,
+        child: BlocBuilder<TeamsCubit, TeamsState>(
+          builder: (context, state) {
+            if (state is TeamsLoadingState) {
+              return const Center(child: CircularProgressIndicator(color: f1Red));
+            }
+
+            if (state is TeamsSuccessState) {
+              final favoritesCubit = context.read<FavoritesCubit>();
+              favoritesCubit.setTeams(state.teams);
+              // state.teams is the list of teams that were successfully fetched from the TeamsCubit
+              // store this list of teams in the FavoritesCubit
+              favoritesCubit.loadFavorites();
+              return ListView.builder(
+                itemCount: state.teams.length,
+                itemBuilder: (context, index) {
+                  return TeamsWidget(team: state.teams[index]);
+                },
+              );
+            }
+
+
+            if (state is TeamsErrorState) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Can't Load Teams",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 10,),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: f1Red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                      ),
+                      onPressed: () {
+
+                        context.read<TeamsCubit>().fetchTeams();
+                      },
+                      child: const Text(
+                        "Refresh",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }
+
+            return const SizedBox.shrink(); // Fallback for other states
+          },
+        ),
       ),
     );
   }

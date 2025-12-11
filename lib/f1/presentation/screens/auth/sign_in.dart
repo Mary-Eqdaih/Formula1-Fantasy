@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_state.dart';
+import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/Custom_text_field.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
 
@@ -37,6 +38,7 @@ class _SignInState extends State<SignIn> {
     return BlocListener<AuthCubit, AuthStates>(
       listener: (context, state) {
         if (state is AuthSuccessState) {
+          context.read<ProfileCubit>().fetchUserData();
           Navigator.pushReplacementNamed(context, Routes.home);
         } else if (state is AuthErrorState) {
           ScaffoldMessenger.of(

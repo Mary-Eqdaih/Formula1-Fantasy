@@ -1,6 +1,6 @@
 //
 // import 'dart:io';
-// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_storage/supabase_storage.dart';
 // import 'package:image_picker/image_picker.dart';
 //
 // class ImageService {
