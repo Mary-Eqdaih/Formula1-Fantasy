@@ -7,13 +7,17 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     required this.controller,
     this.validator,
-    this.label
+    this.label,
+    this.preIcon, this.suffixIcon,
   });
   final String? label;
   final String hint;
   final bool isPassword;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final Icon? preIcon;
+  final IconButton? suffixIcon;
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,9 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(
-        labelText:label ,
+        suffixIcon: suffixIcon,
+        prefixIcon:preIcon,
+        labelText: label,
         errorStyle: TextStyle(color: Colors.white),
         hintText: hint,
         hintStyle: const TextStyle(color: Color(0xffACACAC)),

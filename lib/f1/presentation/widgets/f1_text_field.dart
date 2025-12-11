@@ -8,17 +8,19 @@ class F1TextField extends StatelessWidget {
     this.minLines = 1,
     this.maxLines,
     this.validator,
-    this.textInputAction,
+    this.textInputAction, this.preIcon,
+
   });
 
   final TextEditingController controller;
   final String hint;
   final int minLines;
   final int? maxLines;
-
+  final IconData? preIcon;
   final String? Function(String?)? validator;
 
   final TextInputAction? textInputAction;
+
 
   static const Color _card = Color(0xFF18191A);
   static const Color _f1Red = Color(0xFFE10600);
@@ -50,6 +52,7 @@ class F1TextField extends StatelessWidget {
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
+        prefixIcon: Icon(preIcon),
         filled: true,
         fillColor: _card,
         hintText: hint,

@@ -278,7 +278,11 @@ class Settings extends StatelessWidget {
                                     SnackBar(content: Text(errorMessage)),
                                   );
                                 } else {
-                                  Navigator.pop(context);
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    Routes.signIn,
+                                        (r) => false,
+                                  );
                                 }
                               }
                             }

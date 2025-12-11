@@ -8,20 +8,34 @@ import 'package:formula1_fantasy/f1/data/models/profile_model.dart';
 import '../../../../routes/routes.dart';
 import '../../widgets/Custom_text_field.dart';
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
   SignUp({super.key});
 
+  @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
   TextEditingController emailController = TextEditingController();
+
   TextEditingController usernameController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+
   TextEditingController confirmPasswordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
   final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
   final passwordRegex = RegExp(
     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$',
   );
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
+
     const f1Red = Color(0xFFE10600);
     const deepRed = Color(0xFF7A0000);
     return BlocListener<AuthCubit, AuthStates>(
@@ -85,6 +99,7 @@ class SignUp extends StatelessWidget {
                         SizedBox(height: 30),
 
                         CustomTextField(
+                          preIcon:Icon( Icons.person),
                           isPassword: false,
                           hint: "Username",
                           controller: usernameController,
@@ -98,6 +113,7 @@ class SignUp extends StatelessWidget {
                         ),
                         SizedBox(height: 15),
                         CustomTextField(
+                          preIcon: Icon(Icons.email),
                           isPassword: false,
                           hint: "Email",
                           controller: emailController,
@@ -112,8 +128,17 @@ class SignUp extends StatelessWidget {
                           },
                         ),
                         SizedBox(height: 20),
+
                         CustomTextField(
-                          isPassword: true,
+                          suffixIcon: IconButton(onPressed: (){
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          }, icon: Icon(_isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,)),
+                          preIcon:Icon( Icons.password),
+                          isPassword: !_isPasswordVisible,
                           hint: "Password",
                           controller: passwordController,
                           validator: (password) {
@@ -128,8 +153,16 @@ class SignUp extends StatelessWidget {
                         ),
                         SizedBox(height: 20),
                         CustomTextField(
+                          preIcon: Icon(Icons.password),
+                          suffixIcon: IconButton(onPressed: (){
+                            setState(() {
+                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                            });
+                          }, icon: Icon(_isConfirmPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,)),
                           controller: confirmPasswordController,
-                          isPassword: true,
+                          isPassword: !_isConfirmPasswordVisible,
                           hint: "Confirm Password",
                           validator: (confirm) {
                             if (confirm == null || confirm.isEmpty) {

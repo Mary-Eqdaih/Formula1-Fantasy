@@ -24,6 +24,7 @@ class _SignInState extends State<SignIn> {
   final passwordRegex = RegExp(
     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$',
   );
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -114,6 +115,7 @@ class _SignInState extends State<SignIn> {
                         ),
                         SizedBox(height: 30),
                         CustomTextField(
+                          preIcon: Icon(Icons.email),
                           isPassword: false,
                           hint: "Email",
                           controller: emailController,
@@ -127,7 +129,20 @@ class _SignInState extends State<SignIn> {
                         ),
                         SizedBox(height: 15),
                         CustomTextField(
-                          isPassword: true,
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                          ),
+                          preIcon: Icon(Icons.password),
+                          isPassword: !_isPasswordVisible,
                           hint: "Password",
                           controller: passwordController,
                           validator: (password) {
