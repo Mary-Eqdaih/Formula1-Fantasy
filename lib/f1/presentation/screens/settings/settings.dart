@@ -53,7 +53,9 @@ class Settings extends StatelessWidget {
                         if(state is ProfileSuccessState){
                           return   CircleAvatar(
                             radius: 40,
-                            backgroundImage:state.profileModel.photoUrl == null ? AssetImage("assets/person.jpeg"):
+                            backgroundImage:
+                            state.profileModel.photoUrl!.isEmpty
+                                ? AssetImage("assets/person.jpeg"):
                             NetworkImage(
                               state.profileModel.photoUrl!,
 

@@ -92,14 +92,7 @@ class _ProfileState extends State<Profile> {
         ],
       ),
       backgroundColor: darkBg,
-      body: BlocConsumer<ProfileCubit, ProfileStates>(
-        listener: (context, state) {
-          if (state is ProfileErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error), backgroundColor: Colors.red),
-            );
-          }
-        },
+      body: BlocBuilder<ProfileCubit, ProfileStates>(
         builder: (context, state) {
           if (state is ProfileErrorState) {
             return const Center(
@@ -113,7 +106,6 @@ class _ProfileState extends State<Profile> {
             return const Center(child: CircularProgressIndicator(color: f1Red));
           }
           if (state is ProfileSuccessState) {
-
             return SingleChildScrollView(
               child: Center(
                 child: Column(
@@ -133,47 +125,65 @@ class _ProfileState extends State<Profile> {
                             showDialog(
                               context: context,
                               builder: (dialogContext) {
-                                return StatefulBuilder(
-                                  builder: (context, setDialogState) {
-                                    return AlertDialog(
-                                      backgroundColor: darkBg,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      title: const Text(
-                                        "Edit profile",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 0.8,
-                                        ),
-                                      ),
-                                      content: SingleChildScrollView(
-                                        child: SizedBox(
-                                          width: MediaQuery.of(
-                                            context,
-                                          ).size.width,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Stack(
+                                return AlertDialog(
+                                  backgroundColor: darkBg,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  title: const Text(
+                                    "Edit profile",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
+                                  content: SingleChildScrollView(
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          BlocBuilder<
+                                            ProfileCubit,
+                                            ProfileStates
+                                          >(
+                                            builder: (context, state) {
+                                              String? currentPhotoUrl;
+                                              if (state
+                                                  is ProfileSuccessState) {
+                                                currentPhotoUrl =
+                                                    state.profileModel.photoUrl;
+                                              }
+                                              return Stack(
                                                 children: [
                                                   CircleAvatar(
+
                                                     radius: 50,
                                                     backgroundColor: gray,
                                                     backgroundImage:
-                                                        state.profileModel.photoUrl ==
-                                                            null
-                                                        ? AssetImage(
-                                                            "assets/person.jpeg",
-                                                          )
+                                                        (currentPhotoUrl ==
+                                                                null ||
+                                                            currentPhotoUrl
+                                                                .isEmpty)
+                                                        ? const AssetImage(
+                                                                "assets/person.jpeg",
+                                                              )
+                                                              as ImageProvider
                                                         : NetworkImage(
-                                                          state.profileModel.photoUrl!,
+                                                            currentPhotoUrl,
                                                           ),
+                                                    child: state is ProfileLoadingState
+                                                        ? const Center(
+                                                      child: CircularProgressIndicator(
+                                                        color:f1Red,  // or use your primary color (e.g., f1Red)
+                                                      ),
+                                                    )
+                                                        : null,
                                                   ),
                                                   Positioned(
                                                     bottom: -10,
@@ -194,125 +204,118 @@ class _ProfileState extends State<Profile> {
                                                     ),
                                                   ),
                                                 ],
+                                              );
+                                            },
+                                          ),
+                                          const SizedBox(height: 16),
+                                          const Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              "Edit Name",
+                                              style: TextStyle(
+                                                color: Colors.white,
                                               ),
-                                              const SizedBox(height: 16),
-                                              const Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Text(
-                                                  "Edit Name",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          CustomTextField(
+                                            controller: nameController,
+                                            hint: state.profileModel.name ?? "",
+                                          ),
+                                          const SizedBox(height: 16),
+                                          const Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              "Edit Email",
+                                              style: TextStyle(
+                                                color: Colors.white,
                                               ),
-                                              const SizedBox(height: 10),
-                                              CustomTextField(
-                                                controller: nameController,
-                                                hint:
-                                                    state.profileModel.name ??
-                                                    "",
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          CustomTextField(
+                                            controller: emailController,
+                                            hint:
+                                                state.profileModel.email ?? "",
+                                          ),
+                                          const SizedBox(height: 16),
+                                          const Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              "Edit Bio",
+                                              style: TextStyle(
+                                                color: Colors.white,
                                               ),
-                                              const SizedBox(height: 16),
-                                              const Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Text(
-                                                  "Edit Email",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              CustomTextField(
-                                                controller: emailController,
-                                                hint:
-                                                    state.profileModel.email ??
-                                                    "",
-                                              ),
-                                              const SizedBox(height: 16),
-                                              const Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Text(
-                                                  "Edit Bio",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              CustomTextField(
-                                                controller: bioController,
-                                                hint:
-                                                    state.profileModel.bio ??
-                                                    "Bio",
-                                              ),
-                                            ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          CustomTextField(
+                                            controller: bioController,
+                                            hint:
+                                                state.profileModel.bio ?? "Bio",
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  actionsAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(dialogContext);
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.grey[400],
+                                      ),
+                                      child: const Text("Cancel"),
+                                    ),
+                                    // save and upload pic to supabase ... update other info to firestore
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // Only update the fields that have changed
+                                        String name =
+                                            nameController.text.isNotEmpty
+                                            ? nameController.text
+                                            : state.profileModel.name ?? '';
+
+                                        String email =
+                                            emailController.text.isNotEmpty
+                                            ? emailController.text
+                                            : state.profileModel.email ?? '';
+
+                                        String bio =
+                                            bioController.text.isNotEmpty
+                                            ? bioController.text
+                                            : state.profileModel.bio ?? '';
+
+                                        var updatedProfileModel = ProfileModel(
+                                          bio: bio,
+                                          name: name,
+                                          email: email,
+                                          photoUrl: state.profileModel.photoUrl,
+                                        );
+
+                                        context
+                                            .read<ProfileCubit>()
+                                            .updateUserData(
+                                              updatedProfileModel,
+                                            );
+                                        Navigator.pop(dialogContext);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: f1Red,
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            30,
                                           ),
                                         ),
                                       ),
-                                      actionsAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(dialogContext);
-                                          },
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: Colors.grey[400],
-                                          ),
-                                          child: const Text("Cancel"),
-                                        ),
-                                        // save and upload pic to supabase ... update other info to firestore
-                                        ElevatedButton(
-                                          onPressed: () {
-
-                                            // Only update the fields that have changed
-                                            String name =
-                                                nameController.text.isNotEmpty
-                                                ? nameController.text
-                                                : state.profileModel.name ?? '';
-
-                                            String email =
-                                                emailController.text.isNotEmpty
-                                                ? emailController.text
-                                                : state.profileModel.email ??
-                                                      '';
-
-                                            String bio =
-                                                bioController.text.isNotEmpty
-                                                ? bioController.text
-                                                : state.profileModel.bio ?? '';
-
-                                            var updatedProfileModel =
-                                                ProfileModel(
-                                                  bio: bio,
-                                                  name: name,
-                                                  email: email,
-                                                   photoUrl: state.profileModel.photoUrl
-                                                  ,
-                                                );
-
-                                            context
-                                                .read<ProfileCubit>()
-                                                .updateUserData(
-                                                  updatedProfileModel,
-                                                );
-                                            Navigator.pop(dialogContext);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: f1Red,
-                                            foregroundColor: Colors.white,
-                                            elevation: 0,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
-                                          ),
-                                          child: const Text("Save"),
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                      child: const Text("Save"),
+                                    ),
+                                  ],
                                 );
                               },
                             );
@@ -340,12 +343,9 @@ class _ProfileState extends State<Profile> {
                     CircleAvatar(
                       radius: 50,
                       backgroundColor: gray,
-                      backgroundImage:
-                         state.profileModel.photoUrl == null
+                      backgroundImage: state.profileModel.photoUrl!.isEmpty
                           ? AssetImage("assets/person.jpeg")
-                          : NetworkImage(
-                           state.profileModel.photoUrl!,
-                            ),
+                          : NetworkImage(state.profileModel.photoUrl!),
                     ),
                     const SizedBox(height: 20),
                     // name

@@ -21,7 +21,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   RaceInfoModel? latestRace;
   RaceInfoModel? nextRace;
-  late RaceDetails raceDetails;
+  RaceDetails? raceDetails;
 
   bool loading = true;
 
@@ -31,76 +31,98 @@ class _HomeState extends State<Home> {
     fetchData();
   }
 
+  // Fetch the race data
   fetchData() async {
-    final latest = await F1Api.fetchLatestRace();
-    final next = await F1Api.fetchNextRace();
-    final details = await F1Api.fetchLatestRaceDetails();
+    try {
+      final latest = await F1Api.fetchLatestRace();
+      final next = await F1Api.fetchNextRace(); // This fetches the next race
+      final details = await F1Api.fetchLatestRaceDetails();
 
-    // fetchLatestRace fetchNextRace ... functions thar return RaceInfoModel
-    // assigned to vars also of type RaceInfoModel
-    raceDetails = details;
-    latestRace = latest;
-    nextRace = next;
-
-    setState(() {
-      loading = false;
-    });
+      setState(() {
+        latestRace = latest;
+        nextRace = next;
+        raceDetails = details;
+        loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        loading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to load data: $e")),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     List<NewsModel> news = [
       NewsModel(
+        title: "Lando Norris Wins 2025 F1 World Championship",
+        subtitle:
+        "Lando Norris finishes 3rd in the 2025 Abu Dhabi GP, but his consistent performance throughout the season secured him the 2025 World Championship title, becoming the first British driver to win the championship since Lewis Hamilton.",
+        imgUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5w31MEtn1GlJl8UpGyMEts8O_2RfgaSfJaA&s",
+      ),
+      NewsModel(
+        title: "Max Verstappen Wins 2025 Abu Dhabi GP",
+        subtitle:
+        "Max Verstappen claimed his second victory of the 2025 season at the Abu Dhabi Grand Prix, securing a remarkable win at the Yas Marina Circuit. He is now only 2 points behind in the World Championship standings, setting up an exciting finale to the season.",
+        imgUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7UmFDDWZMcYMZ_BEQJALJiqvHyk2JZwRK8g&s",
+      ),
+      NewsModel(
         title: "McLaren Disqualified from the Race",
         subtitle:
-            "McLaren removed from 2025 Las Vegas GP results after both cars failed post‑race inspection — skid‑block wear below the 9 mm minimum triggered disqualification.",
+        "McLaren removed from 2025 Las Vegas GP results after both cars failed post‑race inspection — skid‑block wear below the 9 mm minimum triggered disqualification.",
         imgUrl:
-            "https://fansbrands.com/cdn/shop/articles/mclaren_auto_7_2a3f8809-05b4-437b-b723-51f073965a6f.jpg?v=1758158815&width=1600",
+        "https://fansbrands.com/cdn/shop/articles/mclaren_auto_7_2a3f8809-05b4-437b-b723-51f073965a6f.jpg?v=1758158815&width=1600",
       ),
       NewsModel(
         title:
-            "Verstappen Wins Las Vegas GP After McLaren Double Disqualification",
+        "Verstappen Wins Las Vegas GP After McLaren Double Disqualification",
         subtitle:
-            "Max Verstappen claimed victory at the 2025 Las Vegas Grand Prix after both McLaren cars were excluded post‑race due to excessive skid‑block wear.", // info from F1 report
+        "Max Verstappen claimed victory at the 2025 Las Vegas Grand Prix after both McLaren cars were excluded post‑race due to excessive skid‑block wear.",
         imgUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjpV1F7rqrWdCIkGMuIeCHwGSiCd5cryJ8uA&s",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjpV1F7rqrWdCIkGMuIeCHwGSiCd5cryJ8uA&s",
       ),
 
       NewsModel(
         title: "McLaren Issues Apology Following Double DSQ in Vegas",
         subtitle:
-            "McLaren acknowledged the disqualification of Lando Norris and Oscar Piastri was unintentional, citing unexpected plank wear due to circuit conditions in Las Vegas.",
+        "McLaren acknowledged the disqualification of Lando Norris and Oscar Piastri was unintentional, citing unexpected plank wear due to circuit conditions in Las Vegas.",
         imgUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjKiGrxsacYpo3C8vcMzND84FD5JJlpwV0lw&s",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjKiGrxsacYpo3C8vcMzND84FD5JJlpwV0lw&s",
       ),
 
       NewsModel(
         title: "Championship Shake‑Up: Norris’ Lead Cut After Vegas DSQ",
         subtitle:
-            "With the Las Vegas Grand Prix results voided for McLaren, the title battle tightens — Verstappen now closes in, while Piastri moves level on points.",
+        "With the Las Vegas Grand Prix results voided for McLaren, the title battle tightens — Verstappen now closes in, while Piastri moves level on points.",
         imgUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHsT6HaaMfpwEqoFY6avgFJe_9fnl7uAiioA&s",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHsT6HaaMfpwEqoFY6avgFJe_9fnl7uAiioA&s",
       ),
 
       NewsModel(
         title: "Full Vegas GP Results: Russell and Antonelli Promote to Podium",
         subtitle:
-            "After McLaren’s exclusion, George Russell and Kimi Antonelli were elevated to 2nd and 3rd place respectively in the adjusted 2025 Las Vegas Grand Prix standings.",
+        "After McLaren’s exclusion, George Russell and Kimi Antonelli were elevated to 2nd and 3rd place respectively in the adjusted 2025 Las Vegas Grand Prix standings.",
         imgUrl:
-            "https://cdn-5.motorsport.com/images/amp/0mb4DnG2/s1000/andrea-kimi-antonelli-mercedes.jpg",
+        "https://cdn-5.motorsport.com/images/amp/0mb4DnG2/s1000/andrea-kimi-antonelli-mercedes.jpg",
       ),
     ];
-    // final user = FirebaseAuth.instance.currentUser;
-
     const f1Red = Color(0xFFE10600);
     const gray = Color(0xFF424242);
 
+    // If the data is still loading, show a loading spinner
     if (loading) {
       return const Center(child: CircularProgressIndicator(color: f1Red));
     }
 
+
     return ListView(
       children: [
+        // Display user profile and greeting
         Row(
           children: [
             Text(
@@ -126,10 +148,10 @@ class _HomeState extends State<Home> {
                     ),
                   );
                 }
-                if(state is ProfileErrorState){
-                  return Text(state.error);
+                if (state is ProfileErrorState) {
+                  return Text("Guest", style: TextStyle(color: Colors.yellow, fontSize: 23));
                 }
-                return Text("Guest",style: TextStyle(color: Colors.yellow,fontSize: 23),);
+                return SizedBox.shrink(); // Fallback if profile state is loading
               },
             ),
             SizedBox(width: 10),
@@ -151,13 +173,13 @@ class _HomeState extends State<Home> {
           title: latestRace!.title,
           color: f1Red,
           subtitle:
-              '${latestRace!.location} • ${latestRace!.circuit} • ${latestRace!.date}',
+          '${latestRace!.location} • ${latestRace!.circuit} • ${latestRace!.date}',
           result: 'Winner: ${latestRace!.winner} (${latestRace!.team})',
           onTap: () async {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => RaceDetailsScreen(race: raceDetails),
+                builder: (_) => RaceDetailsScreen(race: raceDetails!),
               ),
             );
           },
@@ -174,12 +196,33 @@ class _HomeState extends State<Home> {
           ),
         ),
         const SizedBox(height: 12),
-        RaceCardWidget(
+
+        nextRace != null && nextRace!.title != 'No upcoming race'
+            ? RaceCardWidget(
           title: nextRace!.title,
           color: gray,
-          subtitle:
-              '${nextRace!.location} • ${nextRace!.circuit} • ${nextRace!.date} ',
+          subtitle: '${nextRace!.location} • ${nextRace!.circuit} • ${nextRace!.date}',
           result: "Upcoming",
+        )
+            : Card(
+          color: gray,
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Center(
+              child: Text(
+                "The F1 season for this year has concluded. See you next year!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 30),
         Row(
@@ -194,7 +237,6 @@ class _HomeState extends State<Home> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, Routes.news, arguments: news);
@@ -205,7 +247,6 @@ class _HomeState extends State<Home> {
         ),
         const SizedBox(height: 12),
         NewsCardWidget(onTap: () {}, model: news[0]),
-
         const SizedBox(height: 30),
       ],
     );

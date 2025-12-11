@@ -180,29 +180,27 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.notifications, color: Colors.white),
           ),
 
-
-          BlocBuilder<ProfileCubit,ProfileStates>(
+          BlocBuilder<ProfileCubit, ProfileStates>(
             builder: (BuildContext context, ProfileStates state) {
-              if(state is ProfileLoadingState){
-                return CircularProgressIndicator(color: f1Red,);
+              if (state is ProfileLoadingState) {
+                return CircularProgressIndicator(color: f1Red);
               }
-              if(state is ProfileSuccessState){
+              if (state is ProfileSuccessState) {
                 return InkWell(
                   onTap: () {
                     Navigator.pushNamed(context, Routes.profile);
                   },
                   child: CircleAvatar(
                     radius: 10,
-                    backgroundImage: state.profileModel.photoUrl==null?AssetImage("assets/person.jpeg"):
-                    NetworkImage(
-                      state.profileModel.photoUrl!
-                    ),
+                    backgroundImage:
+                    state.profileModel.photoUrl!.isEmpty
+                        ? AssetImage("assets/person.jpeg")
+                        : NetworkImage(state.profileModel.photoUrl!),
                   ),
                 );
               }
               return SizedBox.shrink();
             },
-
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),

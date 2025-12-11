@@ -57,7 +57,7 @@ class _LeaderboardState extends State<Leaderboard> {
           if (state is StandingsErrorState) {
             return Center(
               child: Text(
-                state.message,
+               "Cant Load Leaderboard",
                 style: const TextStyle(color: Colors.white),
               ),
             );

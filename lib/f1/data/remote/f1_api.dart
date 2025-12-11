@@ -36,12 +36,22 @@ class F1Api {
   }
 
 
-
   static Future<RaceInfoModel> fetchNextRace() async {
     final result = await http.get(Uri.parse('$_base/current/next.json'));
     if (result.statusCode != 200) throw Exception('HTTP ${result.statusCode}');
     final data = json.decode(result.body);
-    final race = data['MRData']['RaceTable']['Races'][0];
+    final raceList = data['MRData']['RaceTable']['Races'] as List;
+
+    if (raceList.isEmpty) {
+      return RaceInfoModel(
+        title: 'No upcoming race',
+        circuit: 'N/A',
+        date: 'N/A',
+        location: 'N/A',
+      );
+    }
+
+    final race = raceList[0];
 
     final raceName = race['raceName'];
     final circuit = race['Circuit']['circuitName'];
@@ -56,6 +66,7 @@ class F1Api {
       location: '$locality • $country',
     );
   }
+
 
 
   static Future<RaceDetails> fetchLatestRaceDetails() async {

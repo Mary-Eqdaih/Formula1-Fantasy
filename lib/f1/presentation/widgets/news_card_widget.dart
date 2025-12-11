@@ -21,7 +21,7 @@ class NewsCardWidget extends StatelessWidget {// New parameter for image URL
           child: Column(
             children: [
               Container(
-                height: 200,
+                height: 150,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: NetworkImage(model.imgUrl),
@@ -30,7 +30,7 @@ class NewsCardWidget extends StatelessWidget {// New parameter for image URL
                 ),
               ),
               ListTile(
-                contentPadding: EdgeInsetsGeometry.all(10),
+                // contentPadding: EdgeInsetsGeometry.all(10),
                 title: Text(
                   model.title,
                   style: TextStyle(
