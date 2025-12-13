@@ -16,6 +16,7 @@ import 'package:formula1_fantasy/f1/presentation/screens/auth/sign_up.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/favorites/favorites.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/news/news.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/notes/add_note.dart';
+import 'package:formula1_fantasy/f1/presentation/screens/notifications/notifications.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/profile/profile.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/settings/settings.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
@@ -31,13 +32,13 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Supabase.initialize(
     url: 'https://eifbpydagmgzilcphuwi.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpZmJweWRhZ21nemlsY3BodXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4NDUzMjYsImV4cCI6MjA4MDQyMTMyNn0.buEAp_KJhNQb8MOYlGP-y51y4E73a8iHQ4dC3T1Gvf4',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpZmJweWRhZ21nemlsY3BodXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4NDUzMjYsImV4cCI6MjA4MDQyMTMyNn0.buEAp_KJhNQb8MOYlGP-y51y4E73a8iHQ4dC3T1Gvf4',
     authOptions: const FlutterAuthClientOptions(
       // This is important for session persistence
       autoRefreshToken: true,
     ),
   );
-
 
   // 3. Bridge Firebase Auth with Supabase Auth
   // This listens to Firebase auth state changes and updates Supabase client.
@@ -94,6 +95,7 @@ class _MyAppState extends State<MyApp> {
             Routes.profile: (context) => Profile(),
             Routes.settings: (context) => Settings(),
             Routes.news: (context) => News(),
+            Routes.notifications: (context) => Notifications(),
 
             // Routes.DriverDetails:(context) => DriverDetails(),
           },

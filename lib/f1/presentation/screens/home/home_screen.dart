@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // DriversScreen(),
       Leaderboard(),
       Settings(),
+      // Fantasy(),
     ];
     const f1Red = Color(0xFFE10600);
     const darkBg = Color(0xFF0F0F10);
@@ -139,10 +140,15 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.settings),
             label: "Settings",
           ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.emoji_events),
+          //   label: "Fantasy",
+          // ),
         ],
       ),
       backgroundColor: darkBg,
       floatingActionButton: selectedIndex == 3
+          // || selectedIndex == 4
           ? null
           : FloatingActionButton(
               backgroundColor: f1Red,

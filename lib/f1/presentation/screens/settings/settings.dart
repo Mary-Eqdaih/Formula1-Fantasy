@@ -18,6 +18,7 @@ class Settings extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: darkBg,
         title: Text(
           "Settings",
@@ -144,7 +145,9 @@ class Settings extends StatelessWidget {
 
               SettingsWidget(
                 cardTitle: "Notifications",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.notifications);
+                },
                 title: 'Notification Settings',
                 icon: Icons.notifications,
               ),

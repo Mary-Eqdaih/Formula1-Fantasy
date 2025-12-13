@@ -275,7 +275,7 @@ class _SignUpState extends State<SignUp> {
     final profile = ProfileModel(
       name: usernameController.text,
       email: emailController.text,
-      bio: "",
+      bio: "Bio",
       photoUrl: "",
     );
     context.read<ProfileCubit>().saveUserData(profile);

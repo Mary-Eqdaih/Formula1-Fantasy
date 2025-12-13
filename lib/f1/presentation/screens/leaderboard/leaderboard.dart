@@ -21,7 +21,7 @@ class _LeaderboardState extends State<Leaderboard> {
       backgroundColor: darkBg,
       appBar: AppBar(
         backgroundColor: darkBg,
-
+automaticallyImplyLeading: false,
         title: Text(
           "Leaderboard",
           style: TextStyle(

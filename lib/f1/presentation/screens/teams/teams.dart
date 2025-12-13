@@ -15,6 +15,7 @@ class Teams extends StatelessWidget {
     return Scaffold(
       backgroundColor: darkBg,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: darkBg,
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
