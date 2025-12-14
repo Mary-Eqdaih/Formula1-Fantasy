@@ -13,9 +13,9 @@ This project showcases a modern mobile application built with Flutter, demonstra
 Dark theme, mobile-first UI — built for F1 fans.
 Tap any image to view full size.
 
-| **Sign In** | **Sign Up** | **Home** | **Home 2** | **Race Details**                                     | **Home 3**                                           |
+| **Sign In** | **Sign Up** | **Home** | **Home 2** |**Home 3**                                       | **Race Details**                                           |
 |-------------|-------------|----------|------------|------------------------------------------------------|------------------------------------------------------|     
-| ![Sign In](assets/screenshots/sign_in.png) | ![Sign Up](assets/screenshots/sign_up.png) | ![Home](assets/screenshots/home.png) | ![Home 2](assets/screenshots/home(2).png) |  ![Race Details](assets/screenshots/race_details.png) |![Home3](assets/screenshots/home3.png) |
+| ![Sign In](assets/screenshots/sign_in.png) | ![Sign Up](assets/screenshots/sign_up.png) | ![Home](assets/screenshots/home.png) | ![Home 2](assets/screenshots/home(2).png) |![Home3](assets/screenshots/home3.png) |  ![Race Details](assets/screenshots/race_details.png) |
 
 | **Home 4**                             | **Teams**                   | **Team Details** | **Leaderboard** | **Favorites**                                  |
 |----------------------------------------|------------------|------------------|-----------------|------------------------------------------------|
@@ -25,8 +25,8 @@ Tap any image to view full size.
 |--------------|----------------|---------------|----------------------|
 | ![Add Note](assets/screenshots/add_note.png) | ![Notes](assets/screenshots/notes.png) | ![Edit Note](assets/screenshots/edit_note.png) | ![After Edit](assets/screenshots/notes_after_edit.png) |
 
-| **Settings** | **Profile** | **Edit Profile**                                    | **About F1**                                 | ** Latest F1 News**                     |
-|--------------|-------------|-----------------------------------------------------|----------------------------------------------|-----------------------------------------|
+| **Settings** | **Profile** | **Edit Profile**                                    | **About F1**                                 | **Latest F1 News**                     |
+|--------------|-------------|-----------------------------------------------------|----------------------------------------------|----------------------------------------|
 | ![Settings](assets/screenshots/settings.png) | ![Profile](assets/screenshots/profile.png) | ![Edit Profile](assets/screenshots/edit_profile.png) | ![About F1](assets/screenshots/about_f1.png) | ![F1 News](assets/screenshots/news.png) |
 
 

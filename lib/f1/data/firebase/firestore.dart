@@ -35,5 +35,42 @@ class FirestoreService {
         .update(newProfileModel.toMap());
     // convert dart object into map to save to fire store as a map
   }
+
+  static Future<void> updatePhotoUrl(String uid, String newPhotoUrl) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(userCollection)
+          .doc(uid) // Use the UID to identify the document
+          .update({
+        'photoUrl': newPhotoUrl, // Update only the photoUrl field
+      });
+      print("Profile photo updated successfully!");
+    } catch (e) {
+      print("Error updating profile photo: $e");
+      throw Exception("Failed to update profile photo");
+    }
+  }
+
+
+
+
+  static Future<void> deleteUserData(String uid) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(userCollection)
+          .doc(uid) // Using the uid to identify the user's document
+          .delete(); // This will delete the document from Firestore
+      print("User data deleted successfully!");
+    } catch (e) {
+      print("Error deleting user data: $e");
+      throw Exception("Failed to delete user data");
+    }
+  }
+
+
+
+
+
+
 }
 

@@ -141,7 +141,7 @@ class _SignInState extends State<SignIn> {
                                   : Icons.visibility_off,
                             ),
                           ),
-                          preIcon: Icon(Icons.password),
+                          preIcon: Icon(Icons.lock),
                           isPassword: !_isPasswordVisible,
                           hint: "Password",
                           controller: passwordController,

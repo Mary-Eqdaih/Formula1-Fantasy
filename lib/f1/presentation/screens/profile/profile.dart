@@ -22,6 +22,7 @@ class _ProfileState extends State<Profile> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
+  // final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +94,7 @@ class _ProfileState extends State<Profile> {
       ),
       backgroundColor: darkBg,
       body: RefreshIndicator(
-        onRefresh: (){
+        onRefresh: () {
           context.read<ProfileCubit>().fetchUserData();
           return Future.delayed(Duration(seconds: 1));
         },
@@ -108,7 +109,9 @@ class _ProfileState extends State<Profile> {
               );
             }
             if (state is ProfileLoadingState) {
-              return const Center(child: CircularProgressIndicator(color: f1Red));
+              return const Center(
+                child: CircularProgressIndicator(color: f1Red),
+              );
             }
             if (state is ProfileSuccessState) {
               return SingleChildScrollView(
@@ -116,16 +119,104 @@ class _ProfileState extends State<Profile> {
                   child: Column(
                     children: [
                       // edit button for profile
+
+                      // Avatar
+                      BlocBuilder<ProfileCubit, ProfileStates>(
+                        builder: (context, state) {
+                          String? currentPhotoUrl;
+                          if (state is ProfileSuccessState) {
+                            currentPhotoUrl = state.profileModel.photoUrl;
+                          }
+                          return Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: gray,
+                                backgroundImage:
+                                    (currentPhotoUrl == null ||
+                                        currentPhotoUrl.isEmpty)
+                                    ? const AssetImage("assets/person.jpeg")
+                                          as ImageProvider
+                                    : NetworkImage(currentPhotoUrl),
+                                child: state is ProfileLoadingState
+                                    ? const Center(
+                                        child: CircularProgressIndicator(
+                                          color:
+                                              f1Red, // or use your primary color (e.g., f1Red)
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              Positioned(
+                                bottom: -10,
+                                right: -10,
+                                child: IconButton(
+                                  // image picker only
+                                  onPressed: () {
+                                    //   Pick Image From Gallery and upload to supabase
+                                    context.read<ProfileCubit>().uploadImage();
+                                  },
+                                  icon: const Icon(Icons.camera_alt),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      // name
+                      Text(
+                        state.profileModel.name ?? "No Name",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      // email
+                      // Text(
+                      //   state.profileModel.email ?? "No Email",
+                      //   style: const TextStyle(
+                      //     color: Colors.white,
+                      //     fontSize: 16,
+                      //   ),
+                      // ),
+                      // bio
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 5,
+                          left: 20,
+                          right: 20,
+                          bottom: 5,
+                        ),
+                        child: Text(
+                          state.profileModel.bio ?? "No Bio",
+                          style: const TextStyle(
+                            color: Colors.yellow,
+                            fontSize: 16,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      // Edit Button
                       Align(
-                        alignment: Alignment.topRight,
+                        alignment: Alignment.center,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: TextButton(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: f1Red,
+                              padding: EdgeInsetsGeometry.symmetric(
+                                horizontal: 20,
+                                vertical: 5,
+                              ),
+                            ),
                             onPressed: () {
                               // Reset controllers when opening dialog
                               nameController.clear();
                               emailController.clear();
                               bioController.clear();
+                              // passwordController.clear();
 
                               showDialog(
                                 context: context,
@@ -145,7 +236,9 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     content: SingleChildScrollView(
                                       child: SizedBox(
-                                        width: MediaQuery.of(context).size.width,
+                                        width: MediaQuery.of(
+                                          context,
+                                        ).size.width,
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -153,65 +246,6 @@ class _ProfileState extends State<Profile> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            BlocBuilder<
-                                              ProfileCubit,
-                                              ProfileStates
-                                            >(
-                                              builder: (context, state) {
-                                                String? currentPhotoUrl;
-                                                if (state
-                                                    is ProfileSuccessState) {
-                                                  currentPhotoUrl =
-                                                      state.profileModel.photoUrl;
-                                                }
-                                                return Stack(
-                                                  children: [
-                                                    CircleAvatar(
-
-                                                      radius: 50,
-                                                      backgroundColor: gray,
-                                                      backgroundImage:
-                                                          (currentPhotoUrl ==
-                                                                  null ||
-                                                              currentPhotoUrl
-                                                                  .isEmpty)
-                                                          ? const AssetImage(
-                                                                  "assets/person.jpeg",
-                                                                )
-                                                                as ImageProvider
-                                                          : NetworkImage(
-                                                              currentPhotoUrl,
-                                                            ),
-                                                      child: state is ProfileLoadingState
-                                                          ? const Center(
-                                                        child: CircularProgressIndicator(
-                                                          color:f1Red,  // or use your primary color (e.g., f1Red)
-                                                        ),
-                                                      )
-                                                          : null,
-                                                    ),
-                                                    Positioned(
-                                                      bottom: -10,
-                                                      right: -10,
-                                                      child: IconButton(
-                                                        // image picker only
-                                                        onPressed: () {
-                                                          //   Pick Image From Gallery and upload to supabase
-                                                          context
-                                                              .read<
-                                                                ProfileCubit
-                                                              >()
-                                                              .uploadImage();
-                                                        },
-                                                        icon: const Icon(
-                                                          Icons.camera_alt,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            ),
                                             const SizedBox(height: 16),
                                             const Align(
                                               alignment: Alignment.topLeft,
@@ -225,25 +259,27 @@ class _ProfileState extends State<Profile> {
                                             const SizedBox(height: 10),
                                             CustomTextField(
                                               controller: nameController,
-                                              hint: state.profileModel.name ?? "",
-                                            ),
-                                            const SizedBox(height: 16),
-                                            const Align(
-                                              alignment: Alignment.topLeft,
-                                              child: Text(
-                                                "Edit Email",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            CustomTextField(
-                                              controller: emailController,
                                               hint:
-                                                  state.profileModel.email ?? "",
+                                                  state.profileModel.name ?? "",
                                             ),
                                             const SizedBox(height: 16),
+                                            // const Align(
+                                            //   alignment: Alignment.topLeft,
+                                            //   child: Text(
+                                            //     "Edit Email",
+                                            //     style: TextStyle(
+                                            //       color: Colors.white,
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                            // const SizedBox(height: 10),
+                                            // CustomTextField(
+                                            //   controller: emailController,
+                                            //   hint:
+                                            //       state.profileModel.email ??
+                                            //       "",
+                                            // ),
+                                            // const SizedBox(height: 16),
                                             const Align(
                                               alignment: Alignment.topLeft,
                                               child: Text(
@@ -257,8 +293,24 @@ class _ProfileState extends State<Profile> {
                                             CustomTextField(
                                               controller: bioController,
                                               hint:
-                                                  state.profileModel.bio ?? "Bio",
+                                                  state.profileModel.bio ??
+                                                  "Bio",
                                             ),
+                                            const SizedBox(height: 16),
+                                            // const Align(
+                                            //   alignment: Alignment.topLeft,
+                                            //   child: Text(
+                                            //     "Confirm Password ",
+                                            //     style: TextStyle(
+                                            //       color: Colors.white,
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                            // const SizedBox(height: 10),
+                                            // CustomTextField(
+                                            //   controller: passwordController,
+                                            //   hint: "Password",
+                                            // ),
                                           ],
                                         ),
                                       ),
@@ -294,18 +346,24 @@ class _ProfileState extends State<Profile> {
                                               ? bioController.text
                                               : state.profileModel.bio ?? '';
 
-                                          var updatedProfileModel = ProfileModel(
-                                            bio: bio,
-                                            name: name,
-                                            email: email,
-                                            photoUrl: state.profileModel.photoUrl,
-                                          );
-
+                                          var updatedProfileModel =
+                                              ProfileModel(
+                                                bio: bio,
+                                                name: name,
+                                                email: email,
+                                                photoUrl:
+                                                    state.profileModel.photoUrl,
+                                              );
+                                          // TODO: make sure email changes in firebase auth also
+                                          // separate function to change email
+                                          // coz it
+                                          // requires reauthentication
                                           context
                                               .read<ProfileCubit>()
                                               .updateUserData(
                                                 updatedProfileModel,
                                               );
+
                                           Navigator.pop(dialogContext);
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -343,43 +401,6 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
-
-                      // Avatar
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: gray,
-                        backgroundImage: state.profileModel.photoUrl!.isEmpty
-                            ? AssetImage("assets/person.jpeg")
-                            : NetworkImage(state.profileModel.photoUrl!),
-                      ),
-                      const SizedBox(height: 20),
-                      // name
-                      Text(
-                        state.profileModel.name ?? "No Name",
-                        style: const TextStyle(color: Colors.white, fontSize: 25),
-                      ),
-                      const SizedBox(height: 5),
-                      // email
-                      Text(
-                        state.profileModel.email ?? "No Email",
-                        style: const TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                      // bio
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 20,
-                        ),
-                        child: Text(
-                          state.profileModel.bio ?? "No Bio",
-                          style: const TextStyle(
-                            color: Colors.yellow,
-                            fontSize: 16,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
                       // favs
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -413,7 +434,9 @@ class _ProfileState extends State<Profile> {
                                         return const Center(
                                           child: Text(
                                             "Nothing Added To Favorites",
-                                            style: TextStyle(color: Colors.white),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         );
                                       }

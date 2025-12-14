@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_state.dart';
 import 'package:formula1_fantasy/f1/data/firebase/firebase.dart';
+import 'package:formula1_fantasy/f1/data/firebase/firestore.dart';
 
 class AuthCubit extends Cubit<AuthStates> {
   AuthCubit() : super(AuthInitialState());
@@ -72,7 +73,9 @@ class AuthCubit extends Cubit<AuthStates> {
       await user.reauthenticateWithCredential(cred);
 
       // If re-authentication is successful, delete the account
+      await FirestoreService.deleteUserData(user.uid);
       await user.delete();
+
       await FirebaseAuthServices.signOut();
       emit(AuthInitialState()); // Emit initial state after deletion
       return null; // Return null on success (indicating no error)

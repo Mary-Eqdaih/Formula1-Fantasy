@@ -23,12 +23,14 @@ class _HomeState extends State<Home> {
   RaceInfoModel? nextRace;
   RaceDetails? raceDetails;
 
+
   bool loading = true;
 
   @override
   void initState() {
     super.initState();
     fetchData();
+
   }
 
   // Fetch the race data
@@ -37,6 +39,8 @@ class _HomeState extends State<Home> {
       final latest = await F1Api.fetchLatestRace();
       final next = await F1Api.fetchNextRace(); // This fetches the next race
       final details = await F1Api.fetchLatestRaceDetails();
+
+
 
       setState(() {
         latestRace = latest;

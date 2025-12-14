@@ -7,9 +7,14 @@ import 'package:formula1_fantasy/f1/presentation/widgets/Custom_text_field.dart'
 import 'package:formula1_fantasy/f1/presentation/widgets/settings_widget.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
   const Settings({super.key});
 
+  @override
+  State<Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     const darkBg = Color(0xFF0F0F10);
@@ -228,83 +233,102 @@ class Settings extends StatelessWidget {
 
 
   }
+
   Future<void> promptForPasswordAndDelete(BuildContext context) async {
     final passwordController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
+    bool _isPasswordVisible = false;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: Color(0xFF0F0F10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text("Confirm Account Deletion", style: TextStyle(color: Colors.white)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Please enter your password to confirm deletion.", style: TextStyle(color: Colors.white)),
-              SizedBox(height: 10),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    CustomTextField(
-                      controller: passwordController,
-                      isPassword: true,
-                      hint: 'Enter Your Password',
-                      validator: (confirm) {
-                        if (confirm == null || confirm.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Color(0xFF0F0F10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Text("Confirm Account Deletion", style: TextStyle(color: Colors.white)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Please enter your password to confirm deletion.", style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 10),
+                  Form(
+                    key: _formKey,
+                    child: Column(
                       children: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text("Cancel", style: TextStyle(color: Colors.white)),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              final password = passwordController.text;
-                              if (password.isNotEmpty) {
-                                final errorMessage = await context.read<AuthCubit>().deleteAccount(password);
-
-                                if (errorMessage != null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(errorMessage)),
-                                  );
-                                } else {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    Routes.signIn,
-                                        (r) => false,
-                                  );
-                                }
-                              }
+                        CustomTextField(
+                          preIcon: Icon(Icons.lock,),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              // Toggle password visibility
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
+                          controller: passwordController,
+                          isPassword: !_isPasswordVisible,
+                          hint: 'Enter Your Password',
+                          validator: (confirm) {
+                            if (confirm == null || confirm.isEmpty) {
+                              return 'Please enter your password';
                             }
+                            return null;
                           },
-                          child: const Text("Delete", style: TextStyle(color: Color(0xFFE10600))),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("Cancel", style: TextStyle(color: Colors.white)),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  final password = passwordController.text;
+                                  if (password.isNotEmpty) {
+                                    final errorMessage = await context.read<AuthCubit>().deleteAccount(password);
+                                    // TODO: make sure it deletes user from firestore also
+                                    // DONE
+                                    if (errorMessage != null) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(errorMessage)),
+                                      );
+                                    } else {
+                                      Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        Routes.signIn,
+                                            (r) => false,
+                                      );
+                                    }
+                                  }
+                                }
+                              },
+                              child: const Text("Delete", style: TextStyle(color: Color(0xFFE10600))),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
-
-
 
 }
 

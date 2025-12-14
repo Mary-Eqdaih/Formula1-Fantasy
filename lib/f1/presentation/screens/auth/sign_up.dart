@@ -137,7 +137,7 @@ class _SignUpState extends State<SignUp> {
                           }, icon: Icon(_isPasswordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,)),
-                          preIcon:Icon( Icons.password),
+                          preIcon:Icon( Icons.lock),
                           isPassword: !_isPasswordVisible,
                           hint: "Password",
                           controller: passwordController,
@@ -153,7 +153,7 @@ class _SignUpState extends State<SignUp> {
                         ),
                         SizedBox(height: 20),
                         CustomTextField(
-                          preIcon: Icon(Icons.password),
+                          preIcon: Icon(Icons.lock),
                           suffixIcon: IconButton(onPressed: (){
                             setState(() {
                               _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
