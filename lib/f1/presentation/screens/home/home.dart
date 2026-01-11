@@ -35,32 +35,41 @@ class _HomeState extends State<Home> {
 
   // Fetch the race data
   fetchData() async {
+    if (!mounted) return;
     setState(() => loading = true);
 
     try {
-      // ✅ get next race first (this one works)
+      // 1️⃣ Next race (always safe)
       final next = await F1Api.fetchNextRace();
+      if (!mounted) return;
       setState(() => nextRace = next);
 
-      // latest may fail early season, so wrap it alone
+      // 2️⃣ Latest race (may fail)
       try {
         final latest = await F1Api.fetchLatestRace();
+        if (!mounted) return;
         setState(() => latestRace = latest);
       } catch (_) {
+        if (!mounted) return;
         setState(() => latestRace = null);
       }
 
-      // details may also fail when latest is empty
+      // 3️⃣ Race details (depends on latest)
       try {
         final details = await F1Api.fetchLatestRaceDetails();
+        if (!mounted) return;
         setState(() => raceDetails = details);
       } catch (_) {
+        if (!mounted) return;
         setState(() => raceDetails = null);
       }
+
     } finally {
+      if (!mounted) return;
       setState(() => loading = false);
     }
   }
+
 
 
   @override
