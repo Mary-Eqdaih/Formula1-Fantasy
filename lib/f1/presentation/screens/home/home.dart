@@ -35,28 +35,33 @@ class _HomeState extends State<Home> {
 
   // Fetch the race data
   fetchData() async {
+    setState(() => loading = true);
+
     try {
-      final latest = await F1Api.fetchLatestRace();
-      final next = await F1Api.fetchNextRace(); // This fetches the next race
-      final details = await F1Api.fetchLatestRaceDetails();
+      // ✅ get next race first (this one works)
+      final next = await F1Api.fetchNextRace();
+      setState(() => nextRace = next);
 
+      // latest may fail early season, so wrap it alone
+      try {
+        final latest = await F1Api.fetchLatestRace();
+        setState(() => latestRace = latest);
+      } catch (_) {
+        setState(() => latestRace = null);
+      }
 
-
-      setState(() {
-        latestRace = latest;
-        nextRace = next;
-        raceDetails = details;
-        loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        loading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to load data: $e")),
-      );
+      // details may also fail when latest is empty
+      try {
+        final details = await F1Api.fetchLatestRaceDetails();
+        setState(() => raceDetails = details);
+      } catch (_) {
+        setState(() => raceDetails = null);
+      }
+    } finally {
+      setState(() => loading = false);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -181,6 +186,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           const SizedBox(height: 12),
+          latestRace != null && latestRace!.title != 'No upcoming race'?
           RaceCardWidget(
             title: latestRace!.title,
             color: f1Red,
@@ -195,6 +201,26 @@ class _HomeState extends State<Home> {
                 ),
               );
             },
+          ):
+          Card(
+            color: gray,
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  "No latest race data available right now.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
           ),
 
           const SizedBox(height: 30),
@@ -215,6 +241,11 @@ class _HomeState extends State<Home> {
             color: gray,
             subtitle: '${nextRace!.location} • ${nextRace!.circuit} • ${nextRace!.date}',
             result: "Upcoming",
+            fp3Date: nextRace!.fp3Date,
+             fp2Date:nextRace!.fp2Date ,
+            fp1Date: nextRace!.fp1Date,
+            qauliDate:nextRace!.qualiDate,
+
           )
               : Card(
             color: gray,

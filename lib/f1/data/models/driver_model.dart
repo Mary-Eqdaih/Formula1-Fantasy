@@ -48,7 +48,7 @@ class DriverModel {
       'GAS': 'Alpine',
       'OCO': 'Haas F1 Team',
       'ALB': 'Williams',
-      'HUL': 'Saubar',
+      'HUL': 'Audi',
       'PIA': 'McLaren',
       'TSU': 'Red Bull Racing',
       'COL': 'Alpine',
@@ -56,13 +56,15 @@ class DriverModel {
       'ANT': 'Mercedes',
       'LAW': 'RB F1 Team',
       'HAD': 'RB F1 Team',
-      'BOR': 'Saubar',
+      'BOR': 'Audi',
       'DOO': 'Alpine',
+      'PER': 'Cadilac F1 Team',
+      'BOT': 'Cadilac F1 Team',
     };
     final WCS = {
       'VER': 4,
       'HAM': 7,
-      'NOR': 0,
+      'NOR': 1,
       'LEC': 0,
       'SAI': 0,
       'RUS': 0,
@@ -81,6 +83,8 @@ class DriverModel {
       'HAD': 0,
       'BOR': 0,
       'DOO': 0,
+      'PER': 0,
+      'BOT': 0,
     };
 
     // season poitns for driver
@@ -106,6 +110,8 @@ class DriverModel {
       'BOR': 19,
       'COL': 0,
       'DOO': 0,
+      'PER': 0,
+      'BOT': 0,
     };
 
     // Static Image Mapping (kept as-is from your initial code)
@@ -131,6 +137,8 @@ class DriverModel {
       'HAD': 'assets/images/drivers/isack_hadjar.webp',
       'BOR': 'assets/images/drivers/gabriel_bortoleto.jpeg',
       'DOO': 'assets/images/drivers/jack_doohan.jpeg',
+      'PER': 'assets/images/drivers/sergio_perez.webp',
+      'BOT': 'assets/images/drivers/valtteri_bottas.webp',
     };
 
     return DriverModel(

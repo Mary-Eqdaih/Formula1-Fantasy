@@ -17,11 +17,9 @@ class TeamsModel {
     required this.logo,
     required this.url,
     required this.carImage,
-
-
   });
 
-  factory TeamsModel.fromJson(Map<String, dynamic> json ,{int? index}) {
+  factory TeamsModel.fromJson(Map<String, dynamic> json, {int? index}) {
     final name = json['name'] ?? '';
 
     const logos = {
@@ -35,9 +33,13 @@ class TeamsModel {
       'Haas F1 Team': 'assets/images/haas.svg',
       'RB F1 Team': 'assets/images/RB.svg',
       'Sauber': 'assets/images/Kick Sauber.png',
+      'Cadillac F1 Team': 'assets/images/cadillac.png',
+      'Audi': 'assets/images/audi.png',
     };
 
     const cars = {
+      'Audi': 'assets/images/cars/cadillac.jpg',
+      'Cadillac F1 Team': 'assets/images/cars/cadillac.jpg',
       'Mercedes': 'assets/images/cars/mercedes.jpg',
       'Red Bull': 'assets/images/cars/redbull.jpg',
       'Ferrari': 'assets/images/cars/ferrari.jpg',
@@ -61,11 +63,12 @@ class TeamsModel {
       'Aston Martin': 72,
       'Sauber': 68,
       'Alpine F1 Team': 22,
+      'Audi': 0,
+      'Cadillac F1 Team': 0,
     };
 
-
     return TeamsModel(
-      carImage: cars[name] ?? 'assets/images/cars/ferrari.jpg' ,
+      carImage: cars[name] ?? 'assets/images/cars/ferrari.jpg',
       id: index ?? json['id'] ?? 0,
       url: json["url"],
       constructorId: json["constructorId"],
@@ -77,6 +80,5 @@ class TeamsModel {
   }
 }
 //takes a map and returns TeamModel
-
 
 //So you can use the constructorId from your TeamsModel to call the API when the TeamDetails page opens.

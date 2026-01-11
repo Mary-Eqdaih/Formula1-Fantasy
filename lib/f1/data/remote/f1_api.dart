@@ -35,7 +35,6 @@ class F1Api {
     );
   }
 
-
   static Future<RaceInfoModel> fetchNextRace() async {
     final result = await http.get(Uri.parse('$_base/current/next.json'));
     if (result.statusCode != 200) throw Exception('HTTP ${result.statusCode}');
@@ -48,6 +47,10 @@ class F1Api {
         circuit: 'N/A',
         date: 'N/A',
         location: 'N/A',
+        fp1Date: 'N/A',
+        fp2Date: 'N/A',
+        fp3Date: 'N/A',
+        qualiDate: 'N/A',
       );
     }
 
@@ -58,16 +61,21 @@ class F1Api {
     final country = race['Circuit']['Location']['country'];
     final locality = race['Circuit']['Location']['locality'];
     final date = race['date'];
-
+    final fp1Date = race['FirstPractice']['date'];
+    final fp2Date = race['SecondPractice']['date'];
+    final fp3Date = race['ThirdPractice']['date'];
+    final qualiDate = race['Qualifying']['date'];
     return RaceInfoModel(
+      fp2Date: fp2Date,
+      fp3Date: fp3Date,
+      qualiDate: qualiDate,
       title: raceName,
       circuit: circuit,
       date: date,
       location: '$locality • $country',
+      fp1Date: fp1Date,
     );
   }
-
-
 
   static Future<RaceDetails> fetchLatestRaceDetails() async {
     final result = await http.get(
@@ -81,5 +89,4 @@ class F1Api {
 
     return RaceDetails.fromJson(raceJson);
   }
-
 }

@@ -10,16 +10,22 @@ class DriverStandingsApi {
     final response = await http.get(Uri.parse(_url));
 
     if (response.statusCode != 200) {
-      throw Exception(
-        'Failed to load driver standings (${response.statusCode})',
-      );
+      throw Exception('Failed to load driver standings (${response.statusCode})');
     }
 
-    final data = jsonDecode(response.body);
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
 
-    final List standingsJson =
-        data['MRData']['StandingsTable']['StandingsLists'][0]['DriverStandings'];
+    final standingsLists =
+        (data['MRData']?['StandingsTable']?['StandingsLists'] as List?) ?? [];
 
-    return standingsJson.map((e) => DriverStandingModel.fromJson(e)).toList();
+    // ✅ If empty, return empty standings (NOT error)
+    if (standingsLists.isEmpty) return [];
+
+    final driverStandings =
+        (standingsLists.first?['DriverStandings'] as List?) ?? [];
+
+    return driverStandings
+        .map((e) => DriverStandingModel.fromJson(e))
+        .toList();
   }
 }

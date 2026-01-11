@@ -49,6 +49,31 @@ automaticallyImplyLeading: false,
             }
 
             if (state is StandingsSuccessState) {
+              if (state.standings.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          "No driver standings available yet.",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "This usually happens before the first race of the season.",
+                          style: TextStyle(color: Colors.white70),
+                          textAlign: TextAlign.center,
+                        ),
+
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               return ListView.builder(
                 itemCount: state.standings.length,
                 itemBuilder: (context, index) {
