@@ -29,7 +29,8 @@ class F1Api {
       title: raceName,
       circuit: circuit,
       date: date,
-      location: '$locality • $country',
+      locality: locality,
+      country: country,
       winner: winner,
       team: team,
     );
@@ -46,11 +47,13 @@ class F1Api {
         title: 'No upcoming race',
         circuit: 'N/A',
         date: 'N/A',
-        location: 'N/A',
+        locality: 'N/A',
+        country: 'N/A',
         fp1Date: 'N/A',
         fp2Date: 'N/A',
-        fp3Date: 'N/A',
         qualiDate: 'N/A',
+        sprintQualiDate: 'N/A',
+        sprintDate: 'N/A',
       );
     }
 
@@ -61,19 +64,23 @@ class F1Api {
     final country = race['Circuit']['Location']['country'];
     final locality = race['Circuit']['Location']['locality'];
     final date = race['date'];
-    final fp1Date = race['FirstPractice']['date'];
-    final fp2Date = race['SecondPractice']['date'];
-    final fp3Date = race['ThirdPractice']['date'];
-    final qualiDate = race['Qualifying']['date'];
+    final fp1Date = race['FirstPractice']?['date'];
+    final fp2Date = race['SecondPractice']?['date']; // null on sprint weekends
+    final qualiDate = race['Qualifying']?['date'];
+    final sprintQuali =
+        race['SprintQualifying']?['date']; // null on normal weekends
+    final sprint = race['Sprint']?['date']; // null on normal weekends
+
     return RaceInfoModel(
+      sprintDate: sprint,
+      sprintQualiDate: sprintQuali,
       fp2Date: fp2Date,
-      fp3Date: fp3Date,
       qualiDate: qualiDate,
       title: raceName,
       circuit: circuit,
       date: date,
-      location: '$locality • $country',
-      fp1Date: fp1Date,
+      locality: locality,
+      country: country,      fp1Date: fp1Date,
     );
   }
 

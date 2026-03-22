@@ -7,6 +7,8 @@ import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/Custom_text_field.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
 
+import '../../../../l10n/app_localizations.dart';
+
 class SignIn extends StatefulWidget {
   SignIn({super.key});
 
@@ -16,11 +18,8 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   TextEditingController emailController = TextEditingController();
-
   TextEditingController passwordController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-
   final passwordRegex = RegExp(
     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$',
   );
@@ -34,8 +33,10 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     const f1Red = Color(0xFFE10600);
     const deepRed = Color(0xFF7A0000);
+
     return BlocListener<AuthCubit, AuthStates>(
       listener: (context, state) {
         if (state is AuthSuccessState) {
@@ -51,7 +52,7 @@ class _SignInState extends State<SignIn> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -62,18 +63,13 @@ class _SignInState extends State<SignIn> {
           child: SafeArea(
             child: Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Icon(
-                        //   Icons.sports_motorsports,
-                        //   color: Colors.white,
-                        //   size: 150,
-                        // ),
                         SvgPicture.asset(
                           'assets/images/F1_logo.svg',
                           height: 70,
@@ -82,97 +78,90 @@ class _SignInState extends State<SignIn> {
                             BlendMode.srcIn,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
-                          "Fantasy",
-                          style: TextStyle(
-                            fontFamily: "TitilliumWeb",
+                          l10n.appTitle,
+                          style: const TextStyle(
+                            fontFamily: 'TitilliumWeb',
                             color: Colors.white,
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1,
                           ),
                         ),
-                        SizedBox(height: 40),
+                        const SizedBox(height: 40),
                         Text(
-                          "Welcome Back",
+                          l10n.signInWelcomeBack,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
-                          "Let's Get Started",
+                          l10n.signInGetStarted,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 35,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         CustomTextField(
-                          preIcon: Icon(Icons.email),
+                          preIcon: const Icon(Icons.email),
                           isPassword: false,
-                          hint: "Email",
+                          hint: l10n.signInEmail,
                           controller: emailController,
                           validator: (email) {
-                            if (email == null || email.isEmpty) {
-                              return 'Please enter your email';
-                            }
-
+                            if (email == null || email.isEmpty)
+                              return l10n.signInEmptyEmail;
                             return null;
                           },
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         CustomTextField(
                           suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
+                            onPressed: () => setState(
+                              () => _isPasswordVisible = !_isPasswordVisible,
+                            ),
                             icon: Icon(
                               _isPasswordVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                             ),
                           ),
-                          preIcon: Icon(Icons.lock),
+                          preIcon: const Icon(Icons.lock),
                           isPassword: !_isPasswordVisible,
-                          hint: "Password",
+                          hint: l10n.signInPassword,
                           controller: passwordController,
                           validator: (password) {
-                            if (password == null || password.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            if (!passwordRegex.hasMatch(password)) {
-                              return 'Password must have upper, lower, number, and special character';
-                            }
+                            if (password == null || password.isEmpty)
+                              return l10n.signInEmptyPassword;
+                            if (!passwordRegex.hasMatch(password))
+                              return l10n.signInInvalidPassword;
                             return null;
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "You Don't Have an Account?",
-                              style: TextStyle(
+                              l10n.signInNoAccount,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, Routes.signUp);
-                              },
+                              onPressed: () =>
+                                  Navigator.pushNamed(context, Routes.signUp),
                               child: Text(
-                                "Sign Up",
-                                style: TextStyle(
+                                l10n.signInSignUp,
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.9,
@@ -182,8 +171,7 @@ class _SignInState extends State<SignIn> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 15),
-
+                        const SizedBox(height: 15),
                         SizedBox(
                           width: double.infinity,
                           height: 65,
@@ -202,7 +190,7 @@ class _SignInState extends State<SignIn> {
                                         ),
                                       ),
                                       onPressed: () {},
-                                      child: CircularProgressIndicator(),
+                                      child: const CircularProgressIndicator(),
                                     )
                                   : ElevatedButton(
                                       style: ElevatedButton.styleFrom(
@@ -215,12 +203,10 @@ class _SignInState extends State<SignIn> {
                                           side: BorderSide.none,
                                         ),
                                       ),
-                                      onPressed: () {
-                                        login(context);
-                                      },
-                                      child: const Text(
-                                        "Sign In",
-                                        style: TextStyle(
+                                      onPressed: () => login(context),
+                                      child: Text(
+                                        l10n.signInButton,
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -230,7 +216,7 @@ class _SignInState extends State<SignIn> {
                             },
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),

@@ -129,53 +129,113 @@ class ProfileCubit extends Cubit<ProfileStates> {
 
   Future<void> uploadImage() async {
     final currentState = state;
-    if (currentState is! ProfileSuccessState) {
-      emit(ProfileErrorState("Profile not loaded. Cannot upload image."));
-      return;
+    // We need the old data to revert back if things go wrong
+    ProfileModel? oldModel;
+    if (currentState is ProfileSuccessState) {
+      oldModel = currentState.profileModel;
     }
 
     emit(ProfileLoadingState());
 
-    final imageFile = await pickImage();
-    // covers/images/profile.png
-    if (imageFile == null) {
-      emit(currentState); // Revert to previous state if user cancels
-      return;
-    }
-
-    final timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    final path = "${timeStamp}_${imageFile.path.split("/").last.toLowerCase()}";
-
     try {
-      //  file is image itself
-      //    path ... obvious ... path of image to store in supabase unique
+      final imageFile = await pickImage();
+
+      if (imageFile == null) {
+        // If user cancels, go back to showing the profile
+        if (oldModel != null) {
+          emit(ProfileSuccessState(oldModel));
+        } else {
+          fetchUserData();
+        }
+        return;
+      }
+
+      final timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final fileName = imageFile.path.split("/").last.toLowerCase();
+      final path = "${timeStamp}_$fileName";
+
+      // Upload to Supabase
       await Supabase.instance.client.storage
           .from("avatars")
-          .upload(
-            path,
-            imageFile,
-          ); // https://eifbpydagmgzilcphuwi.supabase.co/storage/v1/object/public/avatars/1765041249476_34.jpg
+          .upload(path, imageFile);
 
-      final imageUrl = await Supabase.instance.client.storage
+      final imageUrl = Supabase.instance.client.storage
           .from("avatars")
           .getPublicUrl(path);
 
-      // Create a new model with old data + new photo URL
-      // Create a new ProfileModel with the updated photoUrl (preserving other data)
       final updatedProfile = ProfileModel(
-        name: currentState.profileModel.name,
-        email: currentState.profileModel.email,
-        bio: currentState.profileModel.bio,
+        name: oldModel?.name,
+        email: oldModel?.email,
+        bio: oldModel?.bio,
         photoUrl: imageUrl,
       );
-      // Use updateUserData which handles state emitting
+
       await FirestoreService.updatePhotoUrl(
         FirebaseAuth.instance.currentUser!.uid,
         imageUrl,
       );
+
       emit(ProfileSuccessState(updatedProfile));
     } catch (e) {
-      emit(ProfileErrorState(e.toString()));
+      // CRITICAL FIX: Instead of showing a blank error screen,
+      // we log the error and keep the profile UI alive.
+      print("UPLOAD ERROR: $e");
+      if (oldModel != null) {
+        emit(ProfileSuccessState(oldModel));
+      } else {
+        emit(ProfileErrorState(e.toString()));
+      }
     }
   }
+  // Future<void> uploadImage() async {
+  //   final currentState = state;
+  //   if (currentState is! ProfileSuccessState) {
+  //     emit(ProfileErrorState("Profile not loaded. Cannot upload image."));
+  //     return;
+  //   }
+  //
+  //   emit(ProfileLoadingState());
+  //
+  //   final imageFile = await pickImage();
+  //   // covers/images/profile.png
+  //   if (imageFile == null) {
+  //     emit(currentState); // Revert to previous state if user cancels
+  //     return;
+  //   }
+  //
+  //   final timeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+  //   final path = "${timeStamp}_${imageFile.path.split("/").last.toLowerCase()}";
+  //
+  //   try {
+  //     //  file is image itself
+  //     //    path ... obvious ... path of image to store in supabase unique
+  //     await Supabase.instance.client.storage
+  //         .from("avatars")
+  //         .upload(
+  //           path,
+  //           imageFile,
+  //         ); // https://eifbpydagmgzilcphuwi.supabase.co/storage/v1/object/public/avatars/1765041249476_34.jpg
+  //
+  //     final imageUrl = await Supabase.instance.client.storage
+  //         .from("avatars")
+  //         .getPublicUrl(path);
+  //
+  //     // Create a new model with old data + new photo URL
+  //     // Create a new ProfileModel with the updated photoUrl (preserving other data)
+  //     final updatedProfile = ProfileModel(
+  //       name: currentState.profileModel.name,
+  //       email: currentState.profileModel.email,
+  //       bio: currentState.profileModel.bio,
+  //       photoUrl: imageUrl,
+  //     );
+  //     // Use updateUserData which handles state emitting
+  //     await FirestoreService.updatePhotoUrl(
+  //       FirebaseAuth.instance.currentUser!.uid,
+  //       imageUrl,
+  //     );
+  //     emit(ProfileSuccessState(updatedProfile));
+  //   } catch (e) {
+  //     emit(ProfileErrorState(e.toString()));
+  //   }
+  // }
 }

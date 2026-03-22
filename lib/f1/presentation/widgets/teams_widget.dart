@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formula1_fantasy/f1/cubit/fav_states.dart';
 import 'package:formula1_fantasy/f1/cubit/favs_cubit.dart';
+import 'package:formula1_fantasy/f1/data/local/translations.dart';
 import 'package:formula1_fantasy/f1/data/models/teams_model.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/teams/teams_details.dart';
+
+import '../../../l10n/app_localizations.dart';
 
 class TeamsWidget extends StatelessWidget {
   const TeamsWidget({
@@ -18,6 +21,8 @@ class TeamsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     const cardColor = Color(0xFF18191A);
     const f1Red = Color(0xFFE10600);
 
@@ -65,7 +70,7 @@ class TeamsWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          team.teamName,
+                          translateTeam(context, team.teamName),
                           style: const TextStyle(
                             color: Colors.white,
                             fontFamily: 'TitilliumWeb',
@@ -75,7 +80,7 @@ class TeamsWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          team.nationality,
+                          translateNationality(context, team.nationality),
                           style: const TextStyle(
                             color: Colors.white70,
                             fontFamily: 'TitilliumWeb',
@@ -84,7 +89,7 @@ class TeamsWidget extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          "points : ${team.points}",
+                          '${l10n.points}: ${team.points}',
                           style: const TextStyle(
                             color: Colors.white70,
                             fontFamily: 'TitilliumWeb',
@@ -101,8 +106,6 @@ class TeamsWidget extends StatelessWidget {
                       isFav
                           ? cubit.removeFromFavorites(team)
                           : cubit.addToFavorites(team);
-
-
                     },
                     icon: Icon(
                       isFav ? Icons.favorite : Icons.favorite_border,

@@ -7,6 +7,8 @@ import 'package:formula1_fantasy/f1/presentation/screens/home/home.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/leaderboard/leaderboard.dart';
 import 'package:formula1_fantasy/f1/presentation/screens/settings/settings.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../fantasy/fantasy.dart';
 import '../teams/teams.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,105 +23,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final List<Widget> screens = [
-      Home(), Teams(),
-      // DriversScreen(),
+      Home(),
+      Teams(),
       Leaderboard(),
+      Fantasy(),
       Settings(),
-      // Fantasy(),
     ];
     const f1Red = Color(0xFFE10600);
     const darkBg = Color(0xFF0F0F10);
+
     return Scaffold(
-      // drawer: Drawer(
-      //   backgroundColor: darkBg,
-      //   child: ListView(
-      //     padding: EdgeInsets.zero,
-      //     children: [
-      //       DrawerHeader(
-      //         decoration: BoxDecoration(color: gray),
-      //         child: Expanded(
-      //           child: Row(
-      //             children: [
-      //               const CircleAvatar(
-      //                 radius: 30,
-      //                 backgroundImage: NetworkImage('https://placehold.co/600x400/000000/FFFFFF/png'),
-      //               ),
-      //               const SizedBox(width: 20),
-      //              Expanded(child:  Column(
-      //                crossAxisAlignment: CrossAxisAlignment.start,
-      //                mainAxisAlignment: MainAxisAlignment.center,
-      //                children: [
-      //                  Text(
-      //                    FirebaseAuth.instance.currentUser!.displayName ??
-      //                        "User",
-      //                    style: TextStyle(color: Colors.white, fontSize: 20),
-      //                  ),
-      //                  SizedBox(height: 5),
-      //                  Text(
-      //                    FirebaseAuth.instance.currentUser!.email ?? "Email",
-      //                    style: TextStyle(color: Colors.white, fontSize: 14),
-      //                  ),
-      //                ],
-      //              ),),
-      //               const SizedBox(width: 10),
-      //
-      //               // IconButton(onPressed: (){
-      //               //   Navigator.pushNamed(context, Routes.profile);
-      //               // }, icon: Icon(Icons.edit,color:Colors.white,))
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //       ListTile(
-      //         leading: Icon(Icons.home, color: Colors.white),
-      //         title: Text('Home', style: TextStyle(color: Colors.white)),
-      //         onTap: () {
-      //           Navigator.pushReplacementNamed(context, Routes.home);
-      //         },
-      //       ),
-      //
-      //       SizedBox(height: 10),
-      //       ListTile(
-      //         leading: Icon(Icons.person, color: Colors.white),
-      //         title: Text('Profile', style: TextStyle(color: Colors.white)),
-      //         onTap: () {
-      //           Navigator.pushNamed(context, Routes.profile);
-      //         },
-      //       ),
-      //       SizedBox(height: 10),
-      //       ListTile(
-      //         leading: Icon(Icons.info_outline, color: Colors.white),
-      //         title: Text('About F1', style: TextStyle(color: Colors.white)),
-      //         onTap: () {
-      //           Navigator.pushNamed(context, Routes.aboutF1);
-      //         },
-      //       ),
-      //       SizedBox(height: 10),
-      //       ListTile(
-      //         leading: Icon(Icons.settings, color: Colors.white),
-      //         title: Text('Settings', style: TextStyle(color: Colors.white)),
-      //         onTap: () {
-      //           Navigator.pushNamed(context, Routes.settings);
-      //         },
-      //       ),
-      //       SizedBox(height: 10),
-      //       ListTile(
-      //         leading: Icon(Icons.logout, color: Colors.white),
-      //         title: Text('Sign Out', style: TextStyle(color: Colors.white)),
-      //         onTap: () {
-      //           context.read<AuthCubit>().signOut();
-      //           Navigator.pushNamedAndRemoveUntil(
-      //             context,
-      //             Routes.signIn,
-      //                 (r) => false,
-      //           );
-      //
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: darkBg,
         selectedItemColor: f1Red,
@@ -127,39 +42,36 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: selectedIndex,
         type: BottomNavigationBarType.fixed,
         onTap: (index) => setState(() => selectedIndex = index),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.flag), label: "Teams"),
-          // BottomNavigationBarItem(icon: Icon(Icons.people), label: "Drivers"),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.leaderboard),
-            label: "Leaderboard",
+            icon: const Icon(Icons.home_filled),
+            label: l10n.navHome,
           ),
-
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "Settings",
+            icon: const Icon(Icons.flag),
+            label: l10n.navTeams,
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.emoji_events),
-          //   label: "Fantasy",
-          // ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.leaderboard),
+            label: l10n.navLeaderboard,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.emoji_events),
+            label: l10n.navFantasy,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings),
+            label: l10n.navSettings,
+          ),
         ],
       ),
       backgroundColor: darkBg,
-      floatingActionButton: selectedIndex == 3
-          // || selectedIndex == 4
+      floatingActionButton: selectedIndex == 3 || selectedIndex == 4
           ? null
           : FloatingActionButton(
               backgroundColor: f1Red,
-              onPressed: () {
-                Navigator.pushNamed(context, Routes.notes);
-              },
-              child: const Icon(
-                Icons.note_add,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              onPressed: () => Navigator.pushNamed(context, Routes.notes),
+              child: const Icon(Icons.note_add, color: Colors.white),
             ),
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -169,9 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SvgPicture.asset('assets/images/F1_logo.svg', height: 28),
             const SizedBox(width: 8),
-            const Text(
-              "Fantasy",
-              style: TextStyle(
+            Text(
+              l10n.appTitle,
+              style: const TextStyle(
                 fontFamily: 'TitilliumWeb',
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -183,9 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.notifications, color: Colors.white),
+            icon: const Icon(Icons.notifications, color: Colors.white),
           ),
-
           BlocBuilder<ProfileCubit, ProfileStates>(
             builder: (BuildContext context, ProfileStates state) {
               if (state is ProfileLoadingState) {
@@ -193,36 +104,32 @@ class _HomeScreenState extends State<HomeScreen> {
               }
               if (state is ProfileSuccessState) {
                 return InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, Routes.profile);
-                  },
+                  onTap: () => Navigator.pushNamed(context, Routes.profile),
                   child: CircleAvatar(
                     radius: 10,
-                    backgroundImage:
-                    state.profileModel.photoUrl!.isEmpty
-                        ? AssetImage("assets/person.jpeg")
-                        : NetworkImage(state.profileModel.photoUrl!),
+                    backgroundImage: state.profileModel.photoUrl!.isEmpty
+                        ? const AssetImage('assets/person.jpeg')
+                        : NetworkImage(state.profileModel.photoUrl!)
+                              as ImageProvider,
                   ),
                 );
               }
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             },
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (value) async {
-              switch (value) {
-                case 'about':
-                  Navigator.pushNamed(context, Routes.aboutF1); // open About F1
-                  break;
+              if (value == 'about') {
+                Navigator.pushNamed(context, Routes.aboutF1);
               }
             },
-            itemBuilder: (context) => const [
+            itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'about',
                 child: ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text('About F1'),
+                  leading: const Icon(Icons.info_outline),
+                  title: Text(l10n.commonAboutF1),
                 ),
               ),
             ],

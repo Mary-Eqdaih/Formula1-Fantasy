@@ -12,6 +12,7 @@ class Routes {
     static const String driverDetails = "/driverDetails";
     static const String news = "/news";
     static const String notifications = "/notifications";
+    static const String myTeam = "/myTeam";
 
 
 

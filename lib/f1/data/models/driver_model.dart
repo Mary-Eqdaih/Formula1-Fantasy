@@ -61,6 +61,7 @@ class DriverModel {
       'PER': 'Cadilac F1 Team',
       'BOT': 'Cadilac F1 Team',
     };
+
     final WCS = {
       'VER': 4,
       'HAM': 7,
@@ -87,7 +88,7 @@ class DriverModel {
       'BOT': 0,
     };
 
-    // season poitns for driver
+    // season points for driver
     const points = {
       'NOR': 390,
       'PIA': 366,
@@ -114,37 +115,34 @@ class DriverModel {
       'BOT': 0,
     };
 
-    // Static Image Mapping (kept as-is from your initial code)
+    // Using d_driver_fallback_image.png URL format — same as FantasyDriverData
+    // This format works without headers unlike the image/upload/f_auto format
     const images = {
-      'VER': 'assets/images/drivers/max_verstappen.webp',
-      'HAM': 'assets/images/drivers/lewis_hamilton.webp',
-      'NOR': 'assets/images/drivers/lando_norris.jpeg',
-      'LEC': 'assets/images/drivers/charles_leclerc.jpeg',
-      'SAI': 'assets/images/drivers/carlos_sainz.jpeg',
-      'RUS': 'assets/images/drivers/george_russell.jpeg',
-      'ALO': 'assets/images/drivers/fernando_alonso.webp',
-      'STR': 'assets/images/drivers/lance_stroll.jpeg',
-      'GAS': 'assets/images/drivers/pierre_gasly.jpeg',
-      'OCO': 'assets/images/drivers/esteban_ocon.webp',
-      'ALB': 'assets/images/drivers/alex_albon.png',
-      'HUL': 'assets/images/drivers/nico_hulkenberg.jpeg',
-      'PIA': 'assets/images/drivers/oscar_piastri.jpeg',
-      'TSU': 'assets/images/drivers/yuki_tsunoda.webp',
-      'COL': 'assets/images/drivers/franco_colapinto.jpeg',
-      'BEA': 'assets/images/drivers/oliver_bearman.jpeg',
-      'ANT': 'assets/images/drivers/kimi_antonelli.webp',
-      'LAW': 'assets/images/drivers/liam_lawson.webp',
-      'HAD': 'assets/images/drivers/isack_hadjar.webp',
-      'BOR': 'assets/images/drivers/gabriel_bortoleto.jpeg',
-      'DOO': 'assets/images/drivers/jack_doohan.jpeg',
-      'PER': 'assets/images/drivers/sergio_perez.webp',
-      'BOT': 'assets/images/drivers/valtteri_bottas.webp',
+      'VER': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/M/MAXVER01_Max_Verstappen/maxver01.png',
+      'HAM': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LEWHAM01_Lewis_Hamilton/lewham01.png',
+      'NOR': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANNOR01_Lando_Norris/lannor01.png',
+      'LEC': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CHALEC01_Charles_Leclerc/chalec01.png',
+      'SAI': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/C/CARSAI01_Carlos_Sainz/carsai01.png',
+      'RUS': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GEORUS01_George_Russell/georus01.png',
+      'ALO': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/F/FERALO01_Fernando_Alonso/feralo01.png',
+      'STR': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LANSTR01_Lance_Stroll/lanstr01.png',
+      'GAS': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/P/PIEGAS01_Pierre_Gasly/piegas01.png',
+      'OCO': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/E/ESTOCO01_Esteban_Ocon/estoco01.png',
+      'ALB': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/A/ALEALB01_Alexander_Albon/alealb01.png',
+      'HUL': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/N/NICHUL01_Nico_Hulkenberg/nichul01.png',
+      'PIA': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OSCPIA01_Oscar_Piastri/oscpia01.png',
+      'TSU': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/Y/YUKTSU01_Yuki_Tsunoda/yuktsu01.png',
+      'BEA': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/O/OLIBEA01_Oliver_Bearman/olibea01.png',
+      'ANT': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/K/KIMANT01_Kimi_Antonelli/kimant01.png',
+      'LAW': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/L/LIALAW01_Liam_Lawson/lialaw01.png',
+      'HAD': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/I/ISAHAD01_Isack_Hadjar/isahad01.png',
+      'BOR': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/G/GABBOR01_Gabriel_Bortoleto/gabbor01.png',
+      'DOO': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/J/JACDOO01_Jack_Doohan/jacdoo01.png',
+      'COL': 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/F/FRACOL01_Franco_Colapinto/fracol01.png',
     };
 
     return DriverModel(
-      image:
-          images[code] ??
-          'assets/images/drivers/default.webp', // Use static images
+      image: images[code] ?? 'https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/S/silhouette.png',
       driverId: json["driverId"] ?? '',
       name: fullName,
       givenName: json["givenName"] ?? '',

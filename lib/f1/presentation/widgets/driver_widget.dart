@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:formula1_fantasy/f1/data/models/driver_model.dart';
+import 'package:formula1_fantasy/f1/data/local/translations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class DriverWidget extends StatelessWidget {
   const DriverWidget({super.key, required this.model});
@@ -13,107 +15,144 @@ class DriverWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: f1Red.withOpacity(0.25)),
+        border: Border.all(color: f1Red.withOpacity(0.15)),
       ),
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 45,
-            backgroundImage: AssetImage(model.image),
-          ),
-          const SizedBox(width: 25),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Name + points
-                Row(
+          // Top row: photo + name + team pill
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  width: 64,
+                  height: 64,
+                  child: Image.network(
+                    model.image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: Colors.white10,
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.white38,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
+                    Text(
+                      translateDriver(context, model.name),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'TitilliumWeb',
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: f1Red.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: f1Red.withOpacity(0.25)),
+                      ),
                       child: Text(
-                        model.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        translateTeam(context, model.team),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: f1Red,
                           fontFamily: 'TitilliumWeb',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+              ),
+            ],
+          ),
 
-                // Row to divide into two columns
-                Row(
+          const SizedBox(height: 14),
+          const Divider(color: Colors.white12, height: 1),
+          const SizedBox(height: 12),
+
+          // info
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          kv('Date Of Birth', '${model.dateOfBirth}'),
-                          SizedBox(height: 10),
-                          kv('Permanent Number', '${model.permanentNumber}'),
-                          SizedBox(height: 10),
-                          kv('Nationality', '${model.nationality}'),
-
-
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 40), // space between the columns
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 10),
-                          kv('Code', '${model.code}'),
-                          kv('Points', '${model.points}'),
-                          SizedBox(height: 10),
-                          kv('WCS', '${model.raceWins}'),
-                        ],
-                      ),
+                    kv(l10n.driverDob, '${model.dateOfBirth}'),
+                    const SizedBox(height: 10),
+                    kv(l10n.driverPermanentNumber, '${model.permanentNumber}'),
+                    const SizedBox(height: 10),
+                    kv(
+                      l10n.driverNationality,
+                      translateNationality(context, model.nationality),
                     ),
                   ],
                 ),
-
-                // Align the "See more" button at the bottom-right
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      openWikipedia(model);
-                    },
-                    icon: const Icon(
-                      Icons.open_in_new,
-                      size: 16,
-                      color: Colors.white70,
-                    ),
-                    label: const Text(
-                      'See more',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'TitilliumWeb',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    kv(l10n.driverCode, '${model.code}'),
+                    const SizedBox(height: 10),
+                    kv(l10n.driverPoints, '${model.points}'),
+                    const SizedBox(height: 10),
+                    kv(l10n.driverWcs, '${model.raceWins}'),
+                  ],
                 ),
-              ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => openWikipedia(model),
+              icon: const Icon(
+                Icons.open_in_new,
+                size: 14,
+                color: Colors.white38,
+              ),
+              label: Text(
+                l10n.teamDetailsSeeMore,
+                style: const TextStyle(
+                  color: Colors.white54,
+                  fontFamily: 'TitilliumWeb',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              ),
             ),
           ),
         ],
@@ -122,47 +161,41 @@ class DriverWidget extends StatelessWidget {
   }
 
   static Widget kv(String k, String v) {
-    return SizedBox(
-      width: 160, // fixed width makes a neat two-column look
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            k,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontFamily: 'TitilliumWeb',
-              fontSize: 11,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          k,
+          style: const TextStyle(
+            color: Colors.white38,
+            fontFamily: 'TitilliumWeb',
+            fontSize: 10,
+            letterSpacing: 0.5,
           ),
-          Text(
-            v,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white,
-              fontFamily: 'TitilliumWeb',
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-            ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          v,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'TitilliumWeb',
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Future<void> openWikipedia(DriverModel d) async {
     final primary = Uri.tryParse(d.url ?? '');
     final uri =
-        primary ?? Uri.parse('https://en.wikipedia.org/w/index.php?search=${Uri.encodeComponent(d.name)}');
-
+        primary ??
+        Uri.parse(
+          'https://en.wikipedia.org/w/index.php?search=${Uri.encodeComponent(d.name)}',
+        );
     await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
   }
-
-  // static String _initials(String name) {
-  //   final parts = name.trim().split(RegExp(r'\s+'));
-  //   if (parts.isEmpty) return '?';
-  //   if (parts.length == 1) return parts.first[0].toUpperCase();
-  //   return (parts.first[0] + parts.last[0]).toUpperCase();
-  // }
 }

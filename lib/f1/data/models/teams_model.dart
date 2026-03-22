@@ -49,7 +49,6 @@ class TeamsModel {
       'Williams': 'assets/images/cars/williams.jpg',
       'Haas F1 Team': 'assets/images/cars/haas.jpg',
       'RB F1 Team': 'assets/images/cars/racing_bulls.jpg',
-      'Sauber': 'assets/images/cars/kick_sauber.jpg',
     };
     // season points for team
     const points = {

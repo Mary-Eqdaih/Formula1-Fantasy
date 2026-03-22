@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:formula1_fantasy/f1/data/models/driver_standings_model.dart';
+import 'package:formula1_fantasy/f1/data/local/translations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class LeaderboardWidget extends StatelessWidget {
   final int rank;
@@ -13,6 +15,7 @@ class LeaderboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     const baseColor = Color(0xFF18191A);
     const f1Red = Color(0xFFE10600);
     Color borderColor;
@@ -21,30 +24,21 @@ class LeaderboardWidget extends StatelessWidget {
     if (rank == 1) {
       borderColor = f1Red;
       gradient = const LinearGradient(
-        colors: [
-          Color(0xFFE10600),
-          Color(0xFF3A0D11),
-        ],
+        colors: [Color(0xFFE10600), Color(0xFF3A0D11)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
     } else if (rank == 2) {
       borderColor = Colors.grey.shade400;
       gradient = LinearGradient(
-        colors: [
-          Colors.grey.shade700,
-          baseColor,
-        ],
+        colors: [Colors.grey.shade700, baseColor],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
     } else if (rank == 3) {
-      borderColor = const Color(0xFFCD7F32); // Bronze
+      borderColor = const Color(0xFFCD7F32);
       gradient = LinearGradient(
-        colors: [
-          const Color(0xFFCD7F32),
-          baseColor,
-        ],
+        colors: [const Color(0xFFCD7F32), baseColor],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
@@ -86,9 +80,18 @@ class LeaderboardWidget extends StatelessWidget {
           const SizedBox(width: 16),
 
           // Driver image
-          CircleAvatar(
-            radius: 26,
-            backgroundImage: AssetImage(driver.image),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: SizedBox(
+              width: 48,
+              height: 48,
+              child: Image.network(
+                driver.image,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.person, color: Colors.white38),
+              ),
+            ),
           ),
           const SizedBox(width: 16),
 
@@ -98,7 +101,7 @@ class LeaderboardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  driver.fullName,
+                  translateDriver(context, driver.fullName),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -110,7 +113,7 @@ class LeaderboardWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  driver.constructorName,
+                  translateTeam(context, driver.constructorName),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -120,8 +123,9 @@ class LeaderboardWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
+                // "Code" label → l10n key, value stays as-is
                 Text(
-                  'Code: ${driver.code}',
+                  '${l10n.driverCode}: ${driver.code}',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.5),
                     fontFamily: 'TitilliumWeb',
@@ -137,7 +141,7 @@ class LeaderboardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${driver.points} PTS',
+                '${driver.points} ${l10n.pts}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontFamily: 'TitilliumWeb',
@@ -147,7 +151,7 @@ class LeaderboardWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'Wins: ${driver.wins}',
+                '${l10n.wins}: ${driver.wins}',
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.6),
                   fontFamily: 'TitilliumWeb',

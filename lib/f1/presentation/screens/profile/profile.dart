@@ -9,6 +9,7 @@ import 'package:formula1_fantasy/f1/cubit/profile_states.dart';
 import 'package:formula1_fantasy/f1/data/models/profile_model.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/Custom_text_field.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/teams_profile_widget.dart';
+import 'package:formula1_fantasy/l10n/app_localizations.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
 
 class Profile extends StatefulWidget {
@@ -22,10 +23,10 @@ class _ProfileState extends State<Profile> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
-  // final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     const f1Red = Color(0xFFE10600);
     const darkBg = Color(0xFF0F0F10);
     const gray = Color(0xFF424242);
@@ -44,9 +45,9 @@ class _ProfileState extends State<Profile> {
           children: [
             SvgPicture.asset('assets/images/F1_logo.svg', height: 28),
             const SizedBox(width: 8),
-            const Text(
-              "Fantasy",
-              style: TextStyle(
+            Text(
+              l10n.appTitle,
+              style: const TextStyle(
                 fontFamily: 'TitilliumWeb',
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -69,23 +70,29 @@ class _ProfileState extends State<Profile> {
                   break;
                 case 'signOut':
                   await context.read<AuthCubit>().signOut();
-                  Navigator.pushNamed(context, Routes.signIn);
+                  if (context.mounted) {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      Routes.signIn,
+                      (route) => false,
+                    );
+                  }
                   break;
               }
             },
-            itemBuilder: (context) => const [
+            itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'about',
                 child: ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text('About F1'),
+                  leading: const Icon(Icons.info_outline),
+                  title: Text(l10n.commonAboutF1),
                 ),
               ),
               PopupMenuItem(
                 value: 'signOut',
                 child: ListTile(
-                  leading: Icon(Icons.logout),
-                  title: Text('Sign Out'),
+                  leading: const Icon(Icons.logout),
+                  title: Text(l10n.commonSignOut),
                 ),
               ),
             ],
@@ -94,18 +101,29 @@ class _ProfileState extends State<Profile> {
       ),
       backgroundColor: darkBg,
       body: RefreshIndicator(
-        onRefresh: () {
-          context.read<ProfileCubit>().fetchUserData();
-          return Future.delayed(Duration(seconds: 1));
+        color: f1Red,
+        onRefresh: () async {
+          await context.read<ProfileCubit>().fetchUserData();
+          if (context.mounted) {
+            await context.read<FavoritesCubit>().loadFavorites();
+          }
         },
         child: BlocBuilder<ProfileCubit, ProfileStates>(
           builder: (context, state) {
             if (state is ProfileErrorState) {
-              return const Center(
-                child: Text(
-                  "Failed to load profile data",
-                  style: TextStyle(color: Colors.red),
-                ),
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Center(
+                      child: Text(
+                        l10n.profileFailedLoad,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ),
+                ],
               );
             }
             if (state is ProfileLoadingState) {
@@ -114,83 +132,62 @@ class _ProfileState extends State<Profile> {
               );
             }
             if (state is ProfileSuccessState) {
+              final profile = state.profileModel;
               return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Center(
                   child: Column(
                     children: [
-                      // edit button for profile
-
                       // Avatar
-                      BlocBuilder<ProfileCubit, ProfileStates>(
-                        builder: (context, state) {
-                          String? currentPhotoUrl;
-                          if (state is ProfileSuccessState) {
-                            currentPhotoUrl = state.profileModel.photoUrl;
-                          }
-                          return Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundColor: gray,
-                                backgroundImage:
-                                    (currentPhotoUrl == null ||
-                                        currentPhotoUrl.isEmpty)
-                                    ? const AssetImage("assets/person.jpeg")
-                                          as ImageProvider
-                                    : NetworkImage(currentPhotoUrl),
-                                child: state is ProfileLoadingState
-                                    ? const Center(
-                                        child: CircularProgressIndicator(
-                                          color:
-                                              f1Red, // or use your primary color (e.g., f1Red)
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                              Positioned(
-                                bottom: -10,
-                                right: -10,
-                                child: IconButton(
-                                  // image picker only
-                                  onPressed: () {
-                                    //   Pick Image From Gallery and upload to supabase
-                                    context.read<ProfileCubit>().uploadImage();
-                                  },
-                                  icon: const Icon(Icons.camera_alt),
+                      const SizedBox(height: 20),
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: gray,
+                            backgroundImage:
+                                (profile.photoUrl == null ||
+                                    profile.photoUrl!.isEmpty)
+                                ? const AssetImage("assets/person.jpeg")
+                                      as ImageProvider
+                                : NetworkImage(profile.photoUrl!),
+                          ),
+                          Positioned(
+                            bottom: -5,
+                            right: -5,
+                            child: CircleAvatar(
+                              backgroundColor: f1Red,
+                              radius: 18,
+                              child: IconButton(
+                                iconSize: 18,
+                                onPressed: () {
+                                  context.read<ProfileCubit>().uploadImage();
+                                },
+                                icon: const Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ],
-                          );
-                        },
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       // name
                       Text(
-                        state.profileModel.name ?? "No Name",
+                        profile.name ?? l10n.profileNoName,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 25,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 5),
-                      // email
-                      // Text(
-                      //   state.profileModel.email ?? "No Email",
-                      //   style: const TextStyle(
-                      //     color: Colors.white,
-                      //     fontSize: 16,
-                      //   ),
-                      // ),
                       // bio
                       Padding(
-                        padding: const EdgeInsets.only(
-                          top: 5,
-                          left: 20,
-                          right: 20,
-                          bottom: 5,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          state.profileModel.bio ?? "No Bio",
+                          profile.bio ?? l10n.profileNoBio,
                           style: const TextStyle(
                             color: Colors.yellow,
                             fontSize: 16,
@@ -198,210 +195,130 @@ class _ProfileState extends State<Profile> {
                           textAlign: TextAlign.center,
                         ),
                       ),
+                      const SizedBox(height: 15),
                       // Edit Button
-                      Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: f1Red,
-                              padding: EdgeInsetsGeometry.symmetric(
-                                horizontal: 20,
-                                vertical: 5,
-                              ),
-                            ),
-                            onPressed: () {
-                              // Reset controllers when opening dialog
-                              nameController.clear();
-                              emailController.clear();
-                              bioController.clear();
-                              // passwordController.clear();
-
-                              showDialog(
-                                context: context,
-                                builder: (dialogContext) {
-                                  return AlertDialog(
-                                    backgroundColor: darkBg,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    title: const Text(
-                                      "Edit profile",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.8,
-                                      ),
-                                    ),
-                                    content: SingleChildScrollView(
-                                      child: SizedBox(
-                                        width: MediaQuery.of(
-                                          context,
-                                        ).size.width,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(height: 16),
-                                            const Align(
-                                              alignment: Alignment.topLeft,
-                                              child: Text(
-                                                "Edit Name",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            CustomTextField(
-                                              controller: nameController,
-                                              hint:
-                                                  state.profileModel.name ?? "",
-                                            ),
-                                            const SizedBox(height: 16),
-                                            // const Align(
-                                            //   alignment: Alignment.topLeft,
-                                            //   child: Text(
-                                            //     "Edit Email",
-                                            //     style: TextStyle(
-                                            //       color: Colors.white,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            // const SizedBox(height: 10),
-                                            // CustomTextField(
-                                            //   controller: emailController,
-                                            //   hint:
-                                            //       state.profileModel.email ??
-                                            //       "",
-                                            // ),
-                                            // const SizedBox(height: 16),
-                                            const Align(
-                                              alignment: Alignment.topLeft,
-                                              child: Text(
-                                                "Edit Bio",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            CustomTextField(
-                                              controller: bioController,
-                                              hint:
-                                                  state.profileModel.bio ??
-                                                  "Bio",
-                                            ),
-                                            const SizedBox(height: 16),
-                                            // const Align(
-                                            //   alignment: Alignment.topLeft,
-                                            //   child: Text(
-                                            //     "Confirm Password ",
-                                            //     style: TextStyle(
-                                            //       color: Colors.white,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            // const SizedBox(height: 10),
-                                            // CustomTextField(
-                                            //   controller: passwordController,
-                                            //   hint: "Password",
-                                            // ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    actionsAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(dialogContext);
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.grey[400],
-                                        ),
-                                        child: const Text("Cancel"),
-                                      ),
-                                      // save and upload pic to supabase ... update other info to firestore
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          // Only update the fields that have changed
-                                          String name =
-                                              nameController.text.isNotEmpty
-                                              ? nameController.text
-                                              : state.profileModel.name ?? '';
-
-                                          String email =
-                                              emailController.text.isNotEmpty
-                                              ? emailController.text
-                                              : state.profileModel.email ?? '';
-
-                                          String bio =
-                                              bioController.text.isNotEmpty
-                                              ? bioController.text
-                                              : state.profileModel.bio ?? '';
-
-                                          var updatedProfileModel =
-                                              ProfileModel(
-                                                bio: bio,
-                                                name: name,
-                                                email: email,
-                                                photoUrl:
-                                                    state.profileModel.photoUrl,
-                                              );
-                                          // TODO: make sure email changes in firebase auth also
-                                          // separate function to change email
-                                          // coz it
-                                          // requires reauthentication
-                                          context
-                                              .read<ProfileCubit>()
-                                              .updateUserData(
-                                                updatedProfileModel,
-                                              );
-
-                                          Navigator.pop(dialogContext);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: f1Red,
-                                          foregroundColor: Colors.white,
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              30,
-                                            ),
-                                          ),
-                                        ),
-                                        child: const Text("Save"),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            // Edit Button
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Edit",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Icon(Icons.edit, color: Colors.white),
-                              ],
-                            ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: f1Red,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 25,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
+                        onPressed: () {
+                          nameController.text = profile.name ?? '';
+                          bioController.text = profile.bio ?? '';
+
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) {
+                              return AlertDialog(
+                                backgroundColor: darkBg,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                title: Text(
+                                  l10n.profileEditTitle,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l10n.profileEditName,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      CustomTextField(
+                                        controller: nameController,
+                                        hint: l10n.profileEditName,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        l10n.profileEditBio,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      CustomTextField(
+                                        controller: bioController,
+                                        hint: l10n.profileEditBio,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext),
+                                    child: Text(
+                                      l10n.profileCancel,
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      final updatedModel = ProfileModel(
+                                        name: nameController.text,
+                                        bio: bioController.text,
+                                        email: profile.email,
+                                        photoUrl: profile.photoUrl,
+                                      );
+                                      context
+                                          .read<ProfileCubit>()
+                                          .updateUserData(updatedModel);
+                                      Navigator.pop(dialogContext);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: f1Red,
+                                    ),
+                                    child: Text(
+                                      l10n.profileSave,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l10n.profileEdit,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ],
+                        ),
                       ),
-                      // favs
+                      const SizedBox(height: 20),
+                      // Favorites
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Card(
@@ -412,18 +329,18 @@ class _ProfileState extends State<Profile> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Row(
+                                Row(
                                   children: [
                                     Text(
-                                      'Favorite Teams',
-                                      style: TextStyle(
+                                      l10n.profileFavoriteTeams,
+                                      style: const TextStyle(
                                         fontSize: 18,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    SizedBox(width: 5),
-                                    Icon(Icons.favorite, color: f1Red),
+                                    const SizedBox(width: 8),
+                                    const Icon(Icons.favorite, color: f1Red),
                                   ],
                                 ),
                                 const SizedBox(height: 10),
@@ -431,11 +348,11 @@ class _ProfileState extends State<Profile> {
                                   builder: (context, favState) {
                                     if (favState is FavoritesSuccessState) {
                                       if (favState.favs.isEmpty) {
-                                        return const Center(
+                                        return Center(
                                           child: Text(
-                                            "Nothing Added To Favorites",
-                                            style: TextStyle(
-                                              color: Colors.white,
+                                            l10n.profileFavoritesEmpty,
+                                            style: const TextStyle(
+                                              color: Colors.white70,
                                             ),
                                           ),
                                         );
@@ -448,7 +365,7 @@ class _ProfileState extends State<Profile> {
                                         }).toList(),
                                       );
                                     }
-                                    return const SizedBox.shrink();
+                                    return const SizedBox(height: 50);
                                   },
                                 ),
                               ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:formula1_fantasy/f1/cubit/favs_cubit.dart';
+import 'package:formula1_fantasy/f1/data/local/translations.dart';
 import 'package:formula1_fantasy/f1/data/models/teams_model.dart';
+import 'package:formula1_fantasy/l10n/app_localizations.dart';
 import 'package:formula1_fantasy/routes/routes.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,7 @@ class ProfileFavoriteTeamWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
 var cubit = context.read<FavoritesCubit>();
     const darkBg = Color(0xFF0F0F10);
 
@@ -31,7 +34,7 @@ var cubit = context.read<FavoritesCubit>();
             children: [
               // Team Name
               Text(
-                team.teamName, // Display team name
+                '${translateTeam(context, team.teamName)}', // Display team name
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
               // Team Points
@@ -39,7 +42,7 @@ var cubit = context.read<FavoritesCubit>();
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
             Text(
-              "${team.points} points", // Display points
+              "${team.points} ${l10n.pts}", // Display points
               style: TextStyle(color: Colors.yellow, fontSize: 14),
             ),
             SizedBox(width: 10,),

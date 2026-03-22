@@ -5,6 +5,7 @@ import 'package:formula1_fantasy/f1/cubit/auth_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_state.dart';
 import 'package:formula1_fantasy/f1/cubit/profile_cubit.dart';
 import 'package:formula1_fantasy/f1/data/models/profile_model.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../routes/routes.dart';
 import '../../widgets/Custom_text_field.dart';
 
@@ -17,27 +18,23 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   TextEditingController emailController = TextEditingController();
-
   TextEditingController usernameController = TextEditingController();
-
   TextEditingController passwordController = TextEditingController();
-
   TextEditingController confirmPasswordController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-
   final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-
   final passwordRegex = RegExp(
     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$',
   );
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+
   @override
   Widget build(BuildContext context) {
-
+    final l10n = AppLocalizations.of(context)!;
     const f1Red = Color(0xFFE10600);
     const deepRed = Color(0xFF7A0000);
+
     return BlocListener<AuthCubit, AuthStates>(
       listener: (context, state) {
         if (state is AuthSuccessState) {
@@ -53,7 +50,7 @@ class _SignUpState extends State<SignUp> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -64,7 +61,7 @@ class _SignUpState extends State<SignUp> {
           child: SafeArea(
             child: Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
@@ -79,119 +76,118 @@ class _SignUpState extends State<SignUp> {
                             BlendMode.srcIn,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
-                          "Fantasy",
-                          style: TextStyle(
-                            fontFamily: "TitilliumWeb",
+                          l10n.appTitle,
+                          style: const TextStyle(
+                            fontFamily: 'TitilliumWeb',
                             color: Colors.white,
                             fontSize: 40,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1,
                           ),
                         ),
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         Text(
-                          "Welcome To Formula 1",
+                          l10n.signUpWelcome,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 25),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 25,
+                          ),
                         ),
-                        SizedBox(height: 30),
-
+                        const SizedBox(height: 30),
                         CustomTextField(
-                          preIcon:Icon( Icons.person),
+                          preIcon: const Icon(Icons.person),
                           isPassword: false,
-                          hint: "Username",
+                          hint: l10n.signUpUsername,
                           controller: usernameController,
                           validator: (username) {
-                            if (username == null || username.isEmpty) {
-                              return 'Please enter your email';
-                            }
-
+                            if (username == null || username.isEmpty)
+                              return l10n.signUpEmptyUsername;
                             return null;
                           },
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         CustomTextField(
-                          preIcon: Icon(Icons.email),
+                          preIcon: const Icon(Icons.email),
                           isPassword: false,
-                          hint: "Email",
+                          hint: l10n.signUpEmail,
                           controller: emailController,
                           validator: (email) {
-                            if (email == null || email.isEmpty) {
-                              return 'Please enter your email';
-                            }
-                            if (!emailRegex.hasMatch(email)) {
-                              return 'Enter a valid email address';
-                            }
+                            if (email == null || email.isEmpty)
+                              return l10n.signUpEmptyEmail;
+                            if (!emailRegex.hasMatch(email))
+                              return l10n.signUpInvalidEmail;
                             return null;
                           },
                         ),
-                        SizedBox(height: 20),
-
+                        const SizedBox(height: 20),
                         CustomTextField(
-                          suffixIcon: IconButton(onPressed: (){
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          }, icon: Icon(_isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,)),
-                          preIcon:Icon( Icons.lock),
+                          suffixIcon: IconButton(
+                            onPressed: () => setState(
+                              () => _isPasswordVisible = !_isPasswordVisible,
+                            ),
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                          ),
+                          preIcon: const Icon(Icons.lock),
                           isPassword: !_isPasswordVisible,
-                          hint: "Password",
+                          hint: l10n.signUpPassword,
                           controller: passwordController,
                           validator: (password) {
-                            if (password == null || password.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            if (!passwordRegex.hasMatch(password)) {
-                              return 'Password must have upper, lower, number, and special character';
-                            }
+                            if (password == null || password.isEmpty)
+                              return l10n.signUpEmptyPassword;
+                            if (!passwordRegex.hasMatch(password))
+                              return l10n.signUpInvalidPassword;
                             return null;
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         CustomTextField(
-                          preIcon: Icon(Icons.lock),
-                          suffixIcon: IconButton(onPressed: (){
-                            setState(() {
-                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                            });
-                          }, icon: Icon(_isConfirmPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,)),
+                          preIcon: const Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            onPressed: () => setState(
+                              () => _isConfirmPasswordVisible =
+                                  !_isConfirmPasswordVisible,
+                            ),
+                            icon: Icon(
+                              _isConfirmPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                          ),
                           controller: confirmPasswordController,
                           isPassword: !_isConfirmPasswordVisible,
-                          hint: "Confirm Password",
+                          hint: l10n.signUpConfirmPassword,
                           validator: (confirm) {
-                            if (confirm == null || confirm.isEmpty) {
-                              return 'Please enter your password';
-                            }
-                            if (confirm != passwordController.text) {
-                              return "Passwords doesn't match";
-                            }
+                            if (confirm == null || confirm.isEmpty)
+                              return l10n.signUpEmptyConfirm;
+                            if (confirm != passwordController.text)
+                              return l10n.signUpPasswordMismatch;
                             return null;
                           },
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Already Have an Account?",
-                              style: TextStyle(
+                              l10n.signUpHasAccount,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),
                             ),
                             TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, Routes.signIn);
-                              },
+                              onPressed: () =>
+                                  Navigator.pushNamed(context, Routes.signIn),
                               child: Text(
-                                "Sign In",
-                                style: TextStyle(
+                                l10n.signUpSignIn,
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.9,
@@ -201,7 +197,7 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         SizedBox(
                           width: double.infinity,
                           height: 65,
@@ -220,7 +216,7 @@ class _SignUpState extends State<SignUp> {
                                         ),
                                       ),
                                       onPressed: () {},
-                                      child: CircularProgressIndicator(),
+                                      child: const CircularProgressIndicator(),
                                     )
                                   : ElevatedButton(
                                       style: ElevatedButton.styleFrom(
@@ -233,12 +229,10 @@ class _SignUpState extends State<SignUp> {
                                           side: BorderSide.none,
                                         ),
                                       ),
-                                      onPressed: () {
-                                        signUp(context);
-                                      },
-                                      child: const Text(
-                                        "Sign Up",
-                                        style: TextStyle(
+                                      onPressed: () => signUp(context),
+                                      child: Text(
+                                        l10n.signUpButton,
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -248,7 +242,7 @@ class _SignUpState extends State<SignUp> {
                             },
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -275,8 +269,8 @@ class _SignUpState extends State<SignUp> {
     final profile = ProfileModel(
       name: usernameController.text,
       email: emailController.text,
-      bio: "Bio",
-      photoUrl: "",
+      bio: 'Bio',
+      photoUrl: '',
     );
     context.read<ProfileCubit>().saveUserData(profile);
   }

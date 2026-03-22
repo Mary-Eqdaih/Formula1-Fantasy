@@ -4,6 +4,8 @@ import 'package:formula1_fantasy/f1/cubit/standings_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/standings_states.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/leaderboard_widget.dart';
 
+import '../../../../l10n/app_localizations.dart';
+
 class Leaderboard extends StatefulWidget {
   const Leaderboard({super.key});
 
@@ -14,6 +16,7 @@ class Leaderboard extends StatefulWidget {
 class _LeaderboardState extends State<Leaderboard> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     const darkBg = Color(0xFF0F0F10);
     const f1Red = Color(0xFFE10600);
 
@@ -21,10 +24,10 @@ class _LeaderboardState extends State<Leaderboard> {
       backgroundColor: darkBg,
       appBar: AppBar(
         backgroundColor: darkBg,
-automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false,
         title: Text(
-          "Leaderboard",
-          style: TextStyle(
+          l10n.leaderboardTitle,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -34,20 +37,18 @@ automaticallyImplyLeading: false,
       ),
       body: RefreshIndicator(
         color: f1Red,
-        onRefresh: (){
+        onRefresh: () {
           context.read<StandingsCubit>().fetchStandings();
-          return Future.delayed(Duration(seconds: 1));
+          return Future.delayed(const Duration(seconds: 1));
         },
         child: BlocBuilder<StandingsCubit, StandingsStates>(
           builder: (context, state) {
-            if (state is StandingsInitialState) {
-              return const SizedBox.shrink();
-            }
-
+            if (state is StandingsInitialState) return const SizedBox.shrink();
             if (state is StandingsLoadingState) {
-              return const Center(child: CircularProgressIndicator(color: f1Red));
+              return const Center(
+                child: CircularProgressIndicator(color: f1Red),
+              );
             }
-
             if (state is StandingsSuccessState) {
               if (state.standings.isEmpty) {
                 return Center(
@@ -56,70 +57,68 @@ automaticallyImplyLeading: false,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          "No driver standings available yet.",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        Text(
+                          l10n.leaderboardEmpty,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          "This usually happens before the first race of the season.",
-                          style: TextStyle(color: Colors.white70),
+                        Text(
+                          l10n.leaderboardEmptySubtitle,
+                          style: const TextStyle(color: Colors.white70),
                           textAlign: TextAlign.center,
                         ),
-
                       ],
                     ),
                   ),
                 );
               }
-
               return ListView.builder(
                 itemCount: state.standings.length,
-                itemBuilder: (context, index) {
-                  return LeaderboardWidget(
-                    rank: index + 1,
-                    driver: state.standings[index],
-                  );
-                },
+                itemBuilder: (context, index) => LeaderboardWidget(
+                  rank: index + 1,
+                  driver: state.standings[index],
+                ),
               );
             }
-
             if (state is StandingsErrorState) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                     "Can't Load Leaderboard",
+                      l10n.leaderboardCantLoad,
                       style: const TextStyle(color: Colors.white),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: f1Red,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 5,
+                          horizontal: 15,
+                        ),
                       ),
-                      onPressed: () {
-
-                        context.read<StandingsCubit>().fetchStandings();
-                      },
-                      child: const Text(
-                        "Refresh",
-                        style: TextStyle(
+                      onPressed: () =>
+                          context.read<StandingsCubit>().fetchStandings(),
+                      child: Text(
+                        l10n.leaderboardRefresh,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               );
             }
-
             return const SizedBox.shrink();
           },
         ),
