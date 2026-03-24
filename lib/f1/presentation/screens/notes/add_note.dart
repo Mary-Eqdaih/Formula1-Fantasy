@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:formula1_fantasy/f1/cubit/notes_cubit.dart';
 import 'package:formula1_fantasy/f1/presentation/widgets/pills_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:formula1_fantasy/f1/data/models/notes_model.dart';
 
 class AddNote extends StatefulWidget {
   const AddNote({super.key});
@@ -18,8 +17,6 @@ class _AddNoteState extends State<AddNote> {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +51,9 @@ class _AddNoteState extends State<AddNote> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Title',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white70,
                       fontSize: 20,
                       letterSpacing: .4,
@@ -86,7 +83,7 @@ class _AddNoteState extends State<AddNote> {
                         text: _prettyDate(DateTime.now()),
                       ),
                       const SizedBox(width: 8),
-                      PillsWidget(
+                      const PillsWidget(
                         icon: Icons.note_alt_outlined,
                         text: 'Race Notes',
                       ),
@@ -109,9 +106,9 @@ class _AddNoteState extends State<AddNote> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Notes',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white70,
                       fontSize: 20,
                       letterSpacing: .4,
@@ -167,15 +164,16 @@ class _AddNoteState extends State<AddNote> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      NotesModel note = NotesModel(
-                        title: titleController.text,
-                        content: contentController.text,
-                        date: "${DateTime.now().day}/${DateTime.now().month}",
-                      );
-                      notesCubit.addNote(note);
-                      titleController.clear();
-                      contentController.clear();
-                      Navigator.pop(context);
+                      if (titleController.text.isNotEmpty || contentController.text.isNotEmpty) {
+                        notesCubit.addNote(
+                          titleController.text,
+                          contentController.text,
+                          "${DateTime.now().day}/${DateTime.now().month}",
+                        );
+                        titleController.clear();
+                        contentController.clear();
+                        Navigator.pop(context);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: f1Red,

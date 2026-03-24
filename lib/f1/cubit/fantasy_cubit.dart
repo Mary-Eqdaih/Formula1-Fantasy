@@ -1,5 +1,4 @@
-
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formula1_fantasy/f1/data/models/fantasy_model.dart';
 
@@ -15,7 +14,9 @@ class FantasyCubit extends Cubit<FantasyState> {
     _loadSavedTeam();
   }
 
-  // ── Toggle a driver (add if not selected, remove if selected) ──────────────
+  String? get _userId => FirebaseAuth.instance.currentUser?.uid;
+
+  // Toggle a driver (add if not selected, remove if selected)
   void toggleDriver(FantasyDriversModel model) {
     final current = List<FantasyDriversModel>.from(state.selectedDrivers);
 
@@ -35,20 +36,28 @@ class FantasyCubit extends Cubit<FantasyState> {
     }
   }
 
-
   Future<void> saveTeam() async {
+    final uid = _userId;
+    if (uid == null) return;
+
     final ids = state.selectedDrivers.map((d) => d.id).toList();
-    await LocalStorageData.saveFantasyTeam(ids);
+    await LocalStorageData.saveFantasyTeam(uid, ids);
     emit(state.copyWith(isSaved: true));
   }
 
   Future<void> clearTeam() async {
-    await LocalStorageData.clearTeam();
+    final uid = _userId;
+    if(uid == null) return;
+
+    await LocalStorageData.clearTeam(uid);
     emit(const FantasyState(selectedDrivers: [], budget: totalBudget));
   }
 
   Future<void> _loadSavedTeam() async {
-    final ids = await LocalStorageData.loadFantasyTeam();
+    final uid = _userId;
+    if (uid == null) return;
+
+    final ids = await LocalStorageData.loadFantasyTeam(uid);
     if (ids == null) return;
 
     final saved = FantasyDriverData.drivers

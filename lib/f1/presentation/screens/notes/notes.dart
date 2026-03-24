@@ -14,6 +14,12 @@ class Notes extends StatefulWidget {
 
 class _NotesState extends State<Notes> {
   @override
+  void initState() {
+    super.initState();
+    context.read<NotesCubit>().fetchNotes();
+  }
+
+  @override
   Widget build(BuildContext context) {
     const darkBg = Color(0xFF0F0F10);
     const f1Red = Color(0xFFE10600);
@@ -61,18 +67,37 @@ class _NotesState extends State<Notes> {
             );
           }
 
-          // Handle Error State
           if (state is NotesErrorState) {
             return Center(
-              child: Text(
-                'Error: ${state.message}',
-                style: const TextStyle(color: Colors.white),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: f1Red, size: 60),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: ${state.message}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: f1Red,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      context.read<NotesCubit>().fetchNotes();
+                    },
+                    child: const Text('Try Again'),
+                  ),
+                ],
               ),
             );
           }
 
-          // Fallback for initial or other states
-          return const SizedBox.shrink();
+          return const Center(
+            child: CircularProgressIndicator(color: f1Red),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(

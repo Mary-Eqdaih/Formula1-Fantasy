@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_cubit.dart';
 import 'package:formula1_fantasy/f1/cubit/auth_state.dart';
 import 'package:formula1_fantasy/f1/cubit/drivers_cubit.dart';
@@ -39,7 +40,8 @@ import 'l10n/app_localizations.dart';
 final GlobalKey<MyAppState> appStateKey = GlobalKey<MyAppState>();
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Supabase.initialize(
     url: 'https://mofuaahxusmuydqyqizj.supabase.co',
@@ -74,7 +76,7 @@ void main() async {
   // language without any flicker or delay.
   // If nothing was saved yet, loadLocale() returns 'en' as the default.
   final savedLangCode = await LocalStorageData.loadLocale();
-
+  FlutterNativeSplash.remove();
   runApp(MyApp(key: appStateKey, initialLocale: Locale(savedLangCode)));
 }
 
@@ -123,18 +125,13 @@ class MyAppState extends State<MyApp> {
       child: BlocProvider<AuthCubit>(
         create: (_) => AuthCubit()..checkIfLoggedIn(),
         child: MaterialApp(
-          // When setLocale() is called, this rebuilds and the new locale
-          // propagates down to every widget in the tree instantly
           locale: _locale,
           supportedLocales: const [
-            Locale('en'), // English
-            Locale('ar'), // Arabic
+            Locale('en'),
+            Locale('ar'),
           ],
           localizationsDelegates: const [
-            // Our generated translations from the ARB files
             AppLocalizations.delegate,
-            // Flutter's built-in material/cupertino/widgets translations
-            // (handles things like date pickers, back button labels, etc.)
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,

@@ -10,7 +10,7 @@ import 'package:formula1_fantasy/routes/routes.dart';
 import '../../../../l10n/app_localizations.dart';
 
 class SignIn extends StatefulWidget {
-  SignIn({super.key});
+  const SignIn({super.key});
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -116,8 +116,9 @@ class _SignInState extends State<SignIn> {
                           hint: l10n.signInEmail,
                           controller: emailController,
                           validator: (email) {
-                            if (email == null || email.isEmpty)
+                            if (email == null || email.isEmpty) {
                               return l10n.signInEmptyEmail;
+                            }
                             return null;
                           },
                         ),
@@ -138,10 +139,12 @@ class _SignInState extends State<SignIn> {
                           hint: l10n.signInPassword,
                           controller: passwordController,
                           validator: (password) {
-                            if (password == null || password.isEmpty)
+                            if (password == null || password.isEmpty) {
                               return l10n.signInEmptyPassword;
-                            if (!passwordRegex.hasMatch(password))
+                            }
+                            if (!passwordRegex.hasMatch(password)) {
                               return l10n.signInInvalidPassword;
+                            }
                             return null;
                           },
                         ),
@@ -229,7 +232,7 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  login(BuildContext context) async {
+  Future<void> login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       context.read<AuthCubit>().signIn(
         emailController.text,

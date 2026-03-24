@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:formula1_fantasy/f1/cubit/notes_cubit.dart';
 import 'package:formula1_fantasy/f1/data/models/notes_model.dart';
@@ -10,8 +11,8 @@ class NotesWidget extends StatelessWidget {
     contentController.text = model.content;
   }
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController contentController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
   final NotesModel model;
   final void Function(DismissDirection)? onDismissed;
 
@@ -23,11 +24,11 @@ class NotesWidget extends StatelessWidget {
       onDismissed: onDismissed,
       background: Container(
         color: f1Red,
-        child: Center(
+        child: const Center(
           child: Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(10.0),
               child: Text(
                 "Dismiss",
                 style: TextStyle(
@@ -39,10 +40,9 @@ class NotesWidget extends StatelessWidget {
           ),
         ),
       ),
-
       key: UniqueKey(),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10,horizontal: 16),
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white10,
           borderRadius: BorderRadius.circular(10),
@@ -61,7 +61,7 @@ class NotesWidget extends StatelessWidget {
                   fontFamily: "TitilliumWeb",
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Text(
                 model.content,
                 style: const TextStyle(
@@ -76,7 +76,7 @@ class NotesWidget extends StatelessWidget {
           ),
           trailing: Text(
             model.date,
-            style: TextStyle(color: Colors.white, fontFamily: "TitilliumWeb"),
+            style: const TextStyle(color: Colors.white, fontFamily: "TitilliumWeb"),
           ),
           onTap: () {
             showModalBottomSheet(
@@ -86,7 +86,7 @@ class NotesWidget extends StatelessWidget {
                 return FractionallySizedBox(
                   heightFactor: 0.80,
                   child: Container(
-                    decoration: BoxDecoration(color: darkBg),
+                    decoration: const BoxDecoration(color: darkBg),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
@@ -99,7 +99,7 @@ class NotesWidget extends StatelessWidget {
                             minLines: 1,
                             maxLines: 3,
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           F1TextField(
                             textInputAction: TextInputAction.done,
                             controller: contentController,
@@ -107,7 +107,7 @@ class NotesWidget extends StatelessWidget {
                             minLines: 5,
                             maxLines: null,
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           SizedBox(
                             width: double.infinity,
                             height: 65,
@@ -122,6 +122,7 @@ class NotesWidget extends StatelessWidget {
                               ),
                               onPressed: () {
                                 NotesModel updatedNote = NotesModel(
+                                  userId: FirebaseAuth.instance.currentUser?.uid ?? '',
                                   title: titleController.text,
                                   content: contentController.text,
                                   date:
@@ -130,11 +131,11 @@ class NotesWidget extends StatelessWidget {
                                 );
 
                                 context.read<NotesCubit>().updateNote(
-                                  updatedNote,
-                                );
+                                      updatedNote,
+                                    );
                                 Navigator.pop(context);
                               },
-                              child: Text(
+                              child: const Text(
                                 "Edit",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,

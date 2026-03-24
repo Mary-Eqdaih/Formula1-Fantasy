@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:formula1_fantasy/f1/data/models/notes_model.dart';
 import 'package:formula1_fantasy/f1/data/models/profile_model.dart';
 
 class FirestoreService {
   static const String userCollection = "Users";
+  static const String notesCollection = "notes";
 
   // id is document id ... to know where to store data exactly
   static saveUserData(Map<String, dynamic> data, String id) async {
@@ -11,7 +13,6 @@ class FirestoreService {
         .doc(id)
         .set(data);
   }
-  //   writes data in users collection (as a map) ... with doc id ... used when signing up
 
   static Future<ProfileModel> fetchUserData(String id) async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -21,7 +22,6 @@ class FirestoreService {
     if (doc.exists) {
       var data = doc.data() as Map<String, dynamic>;
       var profileModel = ProfileModel.fromJson(data);
-      // takes data (map<String,dynamic>) and convert it to dart object (ProfileModel)
       return profileModel;
     } else {
       throw Exception("User Data Not Found");
@@ -33,16 +33,15 @@ class FirestoreService {
         .collection(userCollection)
         .doc(id)
         .update(newProfileModel.toMap());
-    // convert dart object into map to save to fire store as a map
   }
 
   static Future<void> updatePhotoUrl(String uid, String newPhotoUrl) async {
     try {
       await FirebaseFirestore.instance
           .collection(userCollection)
-          .doc(uid) // Use the UID to identify the document
+          .doc(uid)
           .update({
-        'photoUrl': newPhotoUrl, // Update only the photoUrl field
+        'photoUrl': newPhotoUrl,
       });
       print("Profile photo updated successfully!");
     } catch (e) {
@@ -51,15 +50,12 @@ class FirestoreService {
     }
   }
 
-
-
-
   static Future<void> deleteUserData(String uid) async {
     try {
       await FirebaseFirestore.instance
           .collection(userCollection)
-          .doc(uid) // Using the uid to identify the user's document
-          .delete(); // This will delete the document from Firestore
+          .doc(uid)
+          .delete();
       print("User data deleted successfully!");
     } catch (e) {
       print("Error deleting user data: $e");
@@ -67,10 +63,55 @@ class FirestoreService {
     }
   }
 
+  // Favorites Persistence in firestore
+  static Future<void> updateFavorites(String uid, List<String> favoriteIds) async {
+    await FirebaseFirestore.instance
+        .collection(userCollection)
+        .doc(uid)
+        .update({'favorites': favoriteIds});
+  }
 
+  // Notes Persistence (Sub-collection) in firestore
+  static Future<void> addNoteToCloud(String uid, NotesModel note) async {
+    // We use the local ID as the document ID to keep them synced
+    await FirebaseFirestore.instance
+        .collection(userCollection)
+        .doc(uid)
+        .collection(notesCollection)
+        .doc(note.id.toString())
+        .set(note.toJson());
+  }
 
+  static Future<void> updateNoteInCloud(String uid, NotesModel note) async {
+    await FirebaseFirestore.instance
+        .collection(userCollection)
+        .doc(uid)
+        .collection(notesCollection)
+        .doc(note.id.toString())
+        .update(note.toJson());
+  }
 
+  static Future<void> deleteNoteFromCloud(String uid, int noteId) async {
+    await FirebaseFirestore.instance
+        .collection(userCollection)
+        .doc(uid)
+        .collection(notesCollection)
+        .doc(noteId.toString())
+        .delete();
+  }
 
+  static Future<List<NotesModel>> fetchNotesFromCloud(String uid) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection(userCollection)
+        .doc(uid)
+        .collection(notesCollection)
+        .get();
 
+    return querySnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      // Ensure the ID from the document is put back into the model
+      data['id'] = int.parse(doc.id);
+      return NotesModel.fromJson(data);
+    }).toList();
+  }
 }
-
